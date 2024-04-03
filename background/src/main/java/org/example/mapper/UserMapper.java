@@ -8,9 +8,9 @@ import org.example.pojo.User;
 @Mapper
 public interface UserMapper {
     // 根据用户名查询用户
-    @Select("select * from user where username = #{username}")
+    @Select("select * from tb_user where username = #{username}")
     User findByUserName(String username);
 
-    @Insert("insert into user(username,password,create_time) value(#{username},#{password),now()" )
+    @Insert("insert into tb_user(username,password,create_time) values(#{username},#{password},now())" )
     void add(String username, String password);
 }

@@ -2,6 +2,7 @@ package org.example.controller;
 
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
+import org.apache.ibatis.annotations.Param;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
@@ -21,11 +22,7 @@ public class UserController {
 
     // 注册接口
     @PostMapping("/register")
-    public Result register(
-            @Pattern(regexp = "^\\S{5,16}$") String username,
-            @Pattern(regexp = "~\\S{5,16}$") String password
-
-    ){
+    public Result register(@Param("username") String username,@Param("password") String password){
         // 得到响应结果
         Result result = userService.register(username, password);
         return result;

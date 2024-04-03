@@ -23,17 +23,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<User> register(String username, String password) {
+        System.out.println(username);
+        System.out.println(password);
         // 查询用户
         User user = findByUserName(username);
         if(user != null){
             return Result.error("用户名已被使用");
         }
-        //没有占用，注册
+        // 没有占用，注册
         // 加密
         String md5String = Md5Util.getMD5String(password);
         // 添加
         userMapper.add(username, md5String);
-        register(username, md5String);
         return Result.success();
     }
 }
