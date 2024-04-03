@@ -12,5 +12,5 @@ public interface UserMapper {
     User findByUserName(String username);
 
     @Insert("insert into user(username,password,create_time) value(#{username},#{password),now()" )
-    void add(String username, String md5String);
+    void add(String username, String password);
 }

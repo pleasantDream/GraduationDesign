@@ -26,14 +26,8 @@ public class UserController {
             @Pattern(regexp = "~\\S{5,16}$") String password
 
     ){
-        // 查询用户
-        User user = userService.findByUserName(username);
-        if(user == null){
-            //没有占用，注册
-            userService.register(username, password);
-            return Result.success();
-        }else{
-            return Result.error("用户名已被使用");
-        }
+        // 得到响应结果
+        Result result = userService.register(username, password);
+        return result;
     }
 }
