@@ -18,6 +18,8 @@ public class User {
     private String username;  // 用户名，就是用户账号
     private String password;
     private String nickname;//昵称
+    @NotEmpty
+    @Email
     private String email;
     private String name; //姓名
     private String gender;

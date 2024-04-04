@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import org.apache.ibatis.annotations.Param;
@@ -23,11 +24,24 @@ public class UserController {
 
     // 注册接口
     @PostMapping("/register")
-    public Result register(@Param("username") String username,@Param("password") String password){
+    public Result register(
+            @Param("username") String username,@Param("password") String password,
+            @Param("email") @Validated String email, @Param("code") String code,
+            @Param("recode") String recode
+    ){
         // 得到响应结果
-        Result result = userService.register(username, password);
+        Result result = userService.register(username, password, email, code, recode);
         return result;
     }
+
+    //  发送验证码给邮箱
+    @GetMapping("/login")
+    public String emailValidation(@Param("email") @Validated String email){
+        String ValidateCode = userService.emailValidation(email);
+        // 返回校验码给前端
+        return ValidateCode;
+    }
+
 
     // 登录接口
     @PostMapping("/login")

@@ -8,7 +8,7 @@ public interface UserService {
     User findByUserName(String username);
 
     // 注册
-    Result<User> register(String username, String password);
+    Result<User> register(String username, String password, String email, String code, String recode);
 
     // 登录
     Result login(String username, String password);
@@ -18,4 +18,7 @@ public interface UserService {
 
     // 更新用户基本信息
     void update(User user);
+
+    // 发送验证码
+    public String emailValidation(String email);
 }

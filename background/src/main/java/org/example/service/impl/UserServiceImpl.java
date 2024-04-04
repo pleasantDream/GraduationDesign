@@ -1,6 +1,8 @@
 package org.example.service.impl;
 
 import jakarta.annotation.Resource;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
 import org.example.mapper.UserMapper;
 import org.example.pojo.Result;
 import org.example.pojo.User;
@@ -8,6 +10,7 @@ import org.example.service.UserService;
 import org.example.utils.JwtUtil;
 import org.example.utils.Md5Util;
 import org.example.utils.ThreadLocalUtil;
+import org.example.utils.ValidateCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -38,17 +41,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<User> register(String username, String password) {
+    public Result<User> register(String username, String password, String email, String code, String recode) {
         // 查询用户
         User user = findByUserName(username);
         if(user != null){
             return Result.error("用户名已被使用");
         }
-        // 没有占用，注册
+        user = userMapper.findByUserEmail(email);
+        if(user != null){
+            return Result.error("该邮箱已被使用");
+        }
+        // 验证码验证
+        if(!code.equals(recode)){
+            return Result.error("验证码错误");
+        }
         // 加密
         String md5String = Md5Util.getMD5String(password);
         // 添加
-        userMapper.add(username, md5String);
+        userMapper.add(username, md5String, email);
         return Result.success();
     }
 
@@ -85,5 +95,36 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(User user) {
         userMapper.update(user);
+    }
+
+    @Override
+    public String emailValidation(String email) {
+        try {
+            //创建一个Html实例对象
+            HtmlEmail htmlEmail = new HtmlEmail();
+            //邮箱的smtp服务器，一般中间的哪个就是你用的邮箱的名字
+            htmlEmail.setHostName("smtp.qq.com");
+            //设置发送的字符编码
+            htmlEmail.setCharset("utf-8");
+            //设置收件人
+            htmlEmail.addTo(email);
+            //设置发送人的邮箱和用户名
+            htmlEmail.setFrom("3385369312@qq.com","智慧健康");
+            //设置发送人的用户名和授权码
+            htmlEmail.setAuthentication("3385369312@qq.com","rqnlgkloljufciji");
+            //设置发送标题
+            htmlEmail.setSubject("你的邮箱验证码");
+            //设置发送内容
+            Integer message = ValidateCodeUtil.generateValidateCode(6);
+            String code = String.valueOf(message);
+            htmlEmail.setMsg(code);
+            //发送
+            htmlEmail.send();
+            return code;
+        }
+        catch (EmailException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }
