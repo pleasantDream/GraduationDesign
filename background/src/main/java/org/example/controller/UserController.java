@@ -8,9 +8,10 @@ import org.example.pojo.User;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.DrbgParameters;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -26,5 +27,27 @@ public class UserController {
         // 得到响应结果
         Result result = userService.register(username, password);
         return result;
+    }
+
+    // 登录接口
+    @PostMapping("/login")
+    public Result login(@Param("username") String username,@Param("password") String password){
+        Result result = userService.login(username, password);
+        return  result;
+    }
+
+    // 获取用户信息
+    @GetMapping("/userInfo")
+    public Result<User> userInfo(){
+        User user = userService.userInfo();
+        return Result.success(user);
+    }
+
+    // 更新用户基本信息
+    @PutMapping("/update")
+    public Result update(@RequestBody User user){
+        // @RequestBody User 注解将 json 数据转换成User 类型数据
+        userService.update(user);
+        return Result.success();
     }
 }

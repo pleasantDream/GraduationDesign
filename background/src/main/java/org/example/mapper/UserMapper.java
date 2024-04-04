@@ -3,6 +3,7 @@ package org.example.mapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.example.pojo.User;
 
 @Mapper
@@ -11,6 +12,10 @@ public interface UserMapper {
     @Select("select * from tb_user where username = #{username}")
     User findByUserName(String username);
 
+    // 注册用户
     @Insert("insert into tb_user(username,password,create_time) values(#{username},#{password},now())" )
     void add(String username, String password);
+
+    // 更新用户信息, 此处采用动态SQL
+    void update(User user);
 }
