@@ -9,22 +9,25 @@ import org.jacoco.agent.rt.internal_43f5073.Agent;
 
 import java.time.LocalDateTime;
 
-// lombok 在编译阶段，为实体类自动生成setter   getter  toString等方法
-// 需要在pom文件中引入该依赖    在实体类上添加注解  @Data
+/**
+ * 用户类：存储用户的基本信息，如用户名、密码、电子邮箱等。
+ * lombok 在编译阶段，为实体类自动生成setter   getter  toString等方法
+ * 需要在pom文件中引入该依赖    在实体类上添加注解  @Data
+ * @author TZH
+ */
 @Data
-//用户类：存储用户的基本信息，如用户名、密码、电子邮箱等。
 public class User {
     private Integer id;
-    private String username;  // 用户名，就是用户账号
+    private String username;
     private String password;
-    private String nickname;//昵称
+    private String nickname;
     @NotEmpty
     @Email
     private String email;
-    private String name; //姓名
+    private String name;
     private String gender;
     private String phoneNumber;
-    private String userPic;//用户头像地址
-    private LocalDateTime createTime;//创建时间
+    private String userPic;
+    private LocalDateTime createTime;
     private Integer age;
 }

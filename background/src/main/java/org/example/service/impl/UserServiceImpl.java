@@ -19,18 +19,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author TZH
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
-    // @Autowired 注解默认按照 bean 的类型进行自动装配，通过 @Qualifier 注解指定要注入的 bean 的名称。
-    // @Autowired 注解主要用于按类型自动装配，并且支持通过 @Qualifier 注解指定名称。
-
+    /**
+     *  @Autowired 和 @Resource 都是 Java 中用于注入依赖的注解，但它们有一些不同之处。
+     *  @Autowired 注解默认按照 bean 的类型进行自动装配，通过 @Qualifier 注解指定要注入的 bean 的名称。
+     *  @Autowired 注解主要用于按类型自动装配，并且支持通过 @Qualifier 注解指定名称。
+     */
     @Autowired
     private UserMapper userMapper;
 
-    //  StringRedisTemplate 是 Spring Framework 提供的一个用于操作 Redis 数据库的模板类，
-    //  主要用于操作 Redis 中的字符串类型数据。它是基于 RedisTemplate 的一个简化版本，专门用于处理字符串类型的数据。
-    //  用 @Resource 注解来标识需要注入的依赖资源
+    /**
+     * StringRedisTemplate 是 Spring Framework 提供的一个用于操作 Redis 数据库的模板类，
+     * 主要用于操作 Redis 中的字符串类型数据。它是基于 RedisTemplate 的一个简化版本，专门用于处理字符串类型的数据。
+     * 用 @Resource 注解来标识需要注入的依赖资源
+     */
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
@@ -80,7 +87,8 @@ public class UserServiceImpl implements UserService {
         // opsForValue()：获取用于操作字符串类型数据的操作对象。
         ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
         // 键值都存的一样
-        operations.set(token, token, 24, TimeUnit.HOURS); // 和jwt设定的一天时间匹配
+        // 和jwt设定的一天时间匹配
+        operations.set(token, token, 24, TimeUnit.HOURS);
         return Result.success(token);
     }
 
