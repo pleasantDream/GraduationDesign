@@ -35,7 +35,7 @@ public interface UserMapper {
     );
 
     /**
-     * 此次采用动态SQL
+     * 这里采用动态SQL
      * @param user 用户类对象
      */
     void update(User user);

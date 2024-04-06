@@ -31,19 +31,20 @@ public class UserController {
      * @param password 密码
      * @param email 邮箱
      * @param code 用户输入的验证码
-     * @param recode 前端收到的验证码
+     * @param reCode 前端收到的验证码
      * @return 注册是否成功
      */
     @PostMapping("/register")
     public Result register(
         @Param("username") String username,
         @Param("password") String password,
-        @Param("email") @Validated String email,
+        @Param("password") String rePassword,
+        @Param("email") @Email String email,
         @Param("code") String code,
-        @Param("recode") String recode
+        @Param("reCode") String reCode
     ){
         // 得到响应结果
-        Result result = userService.register(username, password, email, code, recode);
+        Result result = userService.register(username, password, rePassword,email, code, reCode);
         return result;
     }
 
@@ -52,7 +53,7 @@ public class UserController {
      * @param email 用户邮箱
      * @return 发送验证码给邮箱同时将其返回给前端
      */
-    @GetMapping("/login")
+    @GetMapping("/register")
     public String emailValidation(@Param("email") @Validated String email){
         String ValidateCode = userService.emailValidation(email);
         // 返回校验码给前端

@@ -19,12 +19,13 @@ public interface UserService {
      * 注册
      * @param username  用户名
      * @param password 密码
+     * @param rePassword 确认密码
      * @param email 邮箱
      * @param code 用户输入的验证码
-     * @param recode 前端收到的验证码
+     * @param reCode 前端收到的验证码
      * @return 注册是否成功
      */
-    Result<User> register(String username, String password, String email, String code, String recode);
+    Result<User> register(String username, String password, String rePassword, String email, String code, String reCode);
 
     /**
      *

@@ -48,7 +48,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<User> register(String username, String password, String email, String code, String recode) {
+    public Result<User> register(String username, String password, String rePassword, String email, String code, String reCode) {
+        // 确认
+        if(!password.equals(rePassword)){
+            return Result.error("两次密码输入不一致");
+        }
         // 查询用户
         User user = findByUserName(username);
         if(user != null){
@@ -58,8 +62,9 @@ public class UserServiceImpl implements UserService {
         if(user != null){
             return Result.error("该邮箱已被使用");
         }
+
         // 验证码验证
-        if(!code.equals(recode)){
+        if(!code.equals(reCode)){
             return Result.error("验证码错误");
         }
         // 加密
@@ -121,7 +126,7 @@ public class UserServiceImpl implements UserService {
             //设置发送人的用户名和授权码
             htmlEmail.setAuthentication("3385369312@qq.com","rqnlgkloljufciji");
             //设置发送标题
-            htmlEmail.setSubject("你的邮箱验证码");
+            htmlEmail.setSubject("智慧健康: 你的邮箱验证码");
             //设置发送内容
             Integer message = ValidateCodeUtil.generateValidateCode(6);
             String code = String.valueOf(message);
@@ -132,7 +137,7 @@ public class UserServiceImpl implements UserService {
         }
         catch (EmailException e) {
             e.printStackTrace();
-            return "";
+            return "发送失败";
         }
     }
 }
