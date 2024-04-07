@@ -24,7 +24,6 @@ public class User {
     private String email;
     private String name;
     private String gender;
-    private String phoneNumber;
     private String userPic;
     private LocalDateTime createTime;
     private Integer age;

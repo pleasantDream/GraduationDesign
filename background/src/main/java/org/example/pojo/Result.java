@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 封装所有实体类
  * @author TZH
  * @param <T>
  */

@@ -19,7 +19,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/user")
-@Validated
 public class UserController {
 
     @Autowired
@@ -54,7 +53,7 @@ public class UserController {
      * @return 发送验证码给邮箱同时将其返回给前端
      */
     @GetMapping("/register")
-    public String emailValidation(@Param("email") @Validated String email){
+    public String emailValidation(@Param("email") @Email String email){
         String ValidateCode = userService.emailValidation(email);
         // 返回校验码给前端
         return ValidateCode;
