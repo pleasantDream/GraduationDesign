@@ -10,9 +10,14 @@ import java.time.LocalDateTime;
 @Data
 public class Record {
     private Integer id;
+    private String gender;
+    private Integer age;
+    /**
+     * 此次上传体检的用户ID
+     */
     private Integer userId;
     /**
-     * 体检时间
+     * 上传时间
      */
     private LocalDateTime time;
     /**
@@ -27,6 +32,10 @@ public class Record {
     private Integer categoryId;
     private String name;
     /**
+     *  本次体检分析和建议结果
+     */
+    private String result;
+    /**
      * 体格测量
      * height: 身高(米)
      * weight: 体重(千克)
@@ -38,8 +47,8 @@ public class Record {
 
     /**
      * 血压测量
-     * highPressure: 高压
-     * lowPressure: 低压
+     * highPressure: 高压(mmHg)
+     * lowPressure: 低压(mmHg)
      */
     private float highPressure;
     private float lowPressure;
