@@ -1,6 +1,7 @@
 package org.example.service;
 
-import org.example.pojo.Record;
+import org.example.pojo.*;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -11,6 +12,14 @@ import java.io.IOException;
  */
 public interface RecordService {
 
-    String physicalMeasurement(Record record) throws JSONException, IOException;
 
+    String recordPhysical(Physical physical) throws JSONException, IOException;
+
+    String recordBlood(Blood blood) throws JSONException, IOException;
+
+    String recordPressure(Pressure pressure) throws JSONException, IOException;
+
+    String recordTemperature(Temperature temperature) throws JSONException, IOException;
+
+    String recordUrine(Urine urine) throws JSONException, IOException;
 }

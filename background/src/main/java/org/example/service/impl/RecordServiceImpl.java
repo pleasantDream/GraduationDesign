@@ -2,13 +2,16 @@ package org.example.service.impl;
 
 import okhttp3.*;
 import org.example.enums.ChatGptConstant;
+import org.example.mapper.RecordMapper;
+import org.example.pojo.*;
 import org.example.service.RecordService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
-import org.example.pojo.Record;
+
 
 /**
  * @author TZH
@@ -18,75 +21,115 @@ public class RecordServiceImpl implements RecordService {
 
     private final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder().build();
 
+    @Autowired
+    private RecordMapper recordMapper;
+
     @Override
-    public String physicalMeasurement(Record record) throws JSONException, IOException {
+    public String recordPhysical(Physical physical) throws JSONException, IOException {
+        // 多次字符串拼接场景下StringBuilder比String更快
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在有一个用户完成了").append(record.getName()).append("体检项目,结果为:\n性别:");
-        sb.append(record.getGender()).append("\n年龄:").append(record.getAge());
-        if (record.getHeight() != 0){
-            sb.append("\n身高: ").append(record.getHeight()).append("米,");
-        }
-        if (record.getWeight() != 0){
-            sb.append("\n体重: ").append(record.getWeight()).append("千克,");
-        }
-        if (record.getBmi() != 0){
-            sb.append("\nBMI指数: ").append(record.getBmi()).append(",");
-        }
-        if (record.getHighPressure() != 0){
-            sb.append("\n高压: ").append(record.getHighPressure()).append("mmHg,");
-        }
-        if (record.getLowPressure() != 0){
-            sb.append("\n低压: ").append(record.getLowPressure()).append("mmHg,");
-        }
-        if (record.getTemperature() != 0){
-            sb.append("\n体温: ").append(record.getTemperature()).append("摄氏度,");
-        }
-        if (record.getHb() != 0){
-            sb.append("\n血红蛋白: ").append(record.getHb()).append("g/l,");
-        }
-        if (record.getWbc() != 0){
-            sb.append("\n血细胞计数: ").append(record.getWbc()).append("*10^9/l,");
-        }
-        if (record.getPlt() != 0){
-            sb.append("\n血小板计数: ").append(record.getPlt()).append("*10^9/l,");
-        }
-        if (record.getGlucose() != 0){
-            sb.append("\n血糖: ").append(record.getGlucose()).append("mg/dl,");
-        }
-        if (record.getSg() != 0){
-            sb.append("\n尿液比重: ").append(record.getSg()).append(",");
-        }
-        if (record.getPh() != 0){
-            sb.append("\n尿液PH值: ").append(record.getPh()).append(",");
-        }
-        if (record.getProtein() != 0){
-            sb.append("\n蛋白质: ").append(record.getProtein()).append("mg/dl,");
-        }
-        if (record.getKet() != null){
-            sb.append("\n酮体: ").append(record.getKet()).append(",");
-        }
-        if (record.getBld() != null){
-            sb.append("\n潜血: ").append(record.getBld()).append(",");
-        }
-        if (record.getLe() != 0){
-            sb.append("\n白细胞酯酶: ").append(record.getLe()).append("U/l,");
-        }
-        if (record.getCc() != 0){
-            sb.append("\n细胞计数: ").append(record.getCc()).append("cells/ml,");
-        }
-        // 删除末尾多余的逗号
-        if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
-            sb.append("\n");
-        }
-        sb.append("请你当面分析其体检结果,并给出对应的的建议。在100字以内");
+        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append(physical.getGender()).append("\n年龄:").append(physical.getAge());
+        sb.append("\n身高: ").append(physical.getHeight()).append("米,");
+        sb.append("\n体重: ").append(physical.getWeight()).append("千克,");
+        sb.append("\nBMI指数: ").append(physical.getBmi()).append("\n");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
+        // 得到分析建议结果
         String result = wenXinYiYan(content);
-        System.out.println("结果是:"+result);
-        return null;
+        System.out.println(result);
+        // 往Physical类的一个实例中添加分析结果
+        physical.setResult(result);
+        // 往表中插入数据
+        recordMapper.addPhysical(physical);
+        return result;
+    }
+
+    @Override
+    public String recordBlood(Blood blood) throws JSONException, IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append(blood.getGender()).append("\n年龄:").append(blood.getAge());
+        sb.append("\n血红蛋白: ").append(blood.getHb()).append("g/l,");
+        sb.append("\n血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
+        sb.append("\n血小板计数: ").append(blood.getPlt()).append("*10^9/l,");
+        sb.append("\n血糖: ").append(blood.getGlucose()).append("mg/dl\n");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        String content = sb.toString();
+        // 得到分析建议结果
+        String result = wenXinYiYan(content);
+        System.out.println(result);
+        // 往Physical类的一个实例中添加分析结果
+        blood.setResult(result);
+        // 往表中插入数据
+        recordMapper.addBlood(blood);
+        return result;
+
+    }
+
+    @Override
+    public String recordPressure(Pressure pressure) throws JSONException, IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append(pressure.getGender()).append("\n年龄:").append(pressure.getAge());
+        sb.append("\n高压: ").append(pressure.getHighPressure()).append("mmHg,");
+        sb.append("\n低压: ").append(pressure.getLowPressure()).append("mmHg\n");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        String content = sb.toString();
+        // 得到分析建议结果
+        String result = wenXinYiYan(content);
+        System.out.println(result);
+        // 往Physical类的一个实例中添加分析结果
+        pressure.setResult(result);
+        // 往表中插入数据
+        recordMapper.addPressure(pressure);
+        return result;
+    }
+
+    @Override
+    public String recordTemperature(Temperature temperature) throws JSONException, IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append(temperature.getGender()).append("\n年龄:").append(temperature.getAge());
+        sb.append("\n体温: ").append(temperature.getTemperature()).append("摄氏度\n");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        String content = sb.toString();
+        // 得到分析建议结果
+        String result = wenXinYiYan(content);
+        System.out.println(result);
+        // 往Physical类的一个实例中添加分析结果
+        temperature.setResult(result);
+        // 往表中插入数据
+        recordMapper.addTemperature(temperature);
+        return result;
+    }
+
+    @Override
+    public String recordUrine(Urine urine) throws JSONException, IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append(urine.getGender()).append("\n年龄:").append(urine.getAge());
+        sb.append("\n尿液比重: ").append(urine.getSg()).append(",");
+        sb.append("\n尿液PH值: ").append(urine.getPh()).append(",");
+        sb.append("\n蛋白质: ").append(urine.getProtein()).append("mg/dl,");
+        sb.append("\n酮体: ").append(urine.getKet()).append(",");
+        sb.append("\n潜血: ").append(urine.getBld()).append(",");
+        sb.append("\n白细胞酯酶: ").append(urine.getLe()).append("U/l,");
+        sb.append("\n细胞计数: ").append(urine.getCc()).append("亿cells/ml\n");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        String content = sb.toString();
+        // 得到分析建议结果
+        String result = wenXinYiYan(content);
+        System.out.println(result);
+        // 往Physical类的一个实例中添加分析结果
+        urine.setResult(result);
+        // 往表中插入数据
+        recordMapper.addUrine(urine);
+        return result;
     }
 
     public String wenXinYiYan(String content) throws IOException, JSONException {
+        System.out.println("User:"+content);
         String accessToken = getAccessToken();
         MediaType mediaType = MediaType.parse("application/json");
         // 原始json字符串
