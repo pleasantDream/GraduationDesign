@@ -26,17 +26,17 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
 
     /**
-     *  @Autowired 和 @Resource 都是 Java 中用于注入依赖的注解，但它们有一些不同之处。
-     *  @Autowired 注解默认按照 bean 的类型进行自动装配，通过 @Qualifier 注解指定要注入的 bean 的名称。
-     *  @Autowired 注解主要用于按类型自动装配，并且支持通过 @Qualifier 注解指定名称。
+     *  @Autowired是Spring框架特有的注解，默认按照类型(byType)进行自动装配。
+     *  如果找到多个相同类型的 Bean(一个接口可能有多个实现类，但大多数情况下约定只有一个)，
+     *  则可以通过@Qualifier 注解来指定具体要注入的 Bean
      */
     @Autowired
     private UserMapper userMapper;
 
     /**
-     * StringRedisTemplate 是 Spring Framework 提供的一个用于操作 Redis 数据库的模板类，
-     * 主要用于操作 Redis 中的字符串类型数据。它是基于 RedisTemplate 的一个简化版本，专门用于处理字符串类型的数据。
-     * 用 @Resource 注解来标识需要注入的依赖资源
+     *  Spring 框架提供了对@Resource注解的支持，所以可以注入到ioc容器里
+     *  @Resource 是java EE 标准提供的规范
+     *  @Resource 按名称自动匹配，若没有查找到匹配的名称按照类型进行注入
      */
     @Resource
     private StringRedisTemplate stringRedisTemplate;
