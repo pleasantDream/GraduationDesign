@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User user) {
+    public void updateInfo(User user) {
         userMapper.update(user);
     }
 
@@ -139,5 +139,20 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace();
             return "发送失败";
         }
+    }
+
+    @Override
+    public Result updateEmail(Map<String, String> params) {
+        String email = params.get("email");
+        String code = params.get("code");
+        String recode = params.get("recode");
+        if(!code.equals(recode)){
+            return Result.error("验证码错误");
+        }
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer id = (Integer)map.get("id");
+        userMapper.updateEmail(email,id);
+        return Result.success();
     }
 }

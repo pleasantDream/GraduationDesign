@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
+import org.example.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,7 @@ public class UserController {
      */
     @GetMapping("/register")
     public String emailValidation(@Param("email") @Email String email){
+        System.out.println("验证码发送接口被调用");
         String ValidateCode = userService.emailValidation(email);
         // 返回校验码给前端
         return ValidateCode;
@@ -69,7 +71,9 @@ public class UserController {
      */
     @PostMapping("/login")
     public Result login(@Param("username") String username,@Param("password") String password){
+        System.out.println("登录接口被调用");
         Result result = userService.login(username, password);
+
         return  result;
     }
 
@@ -79,7 +83,9 @@ public class UserController {
      */
     @GetMapping("/userInfo")
     public Result<User> userInfo(){
+        System.out.println("获取用户信息接口被调用");
         User user = userService.userInfo();
+
         return Result.success(user);
     }
 
@@ -88,10 +94,19 @@ public class UserController {
      * @param user 用户实体类的对象
      * @return 更新用户基本信息是否成功
      */
-    @PutMapping("/update")
-    public Result update(@RequestBody User user){
+    @PutMapping("/info/update")
+    public Result updateInfo(@RequestBody User user){
+        System.out.println("更新用户信息接口被调用");
         // @RequestBody User 注解将 json 数据转换成User 类型数据
-        userService.update(user);
+        userService.updateInfo(user);
         return Result.success();
+    }
+
+    @PatchMapping("/email/update")
+    public Result updateEmail(@RequestBody Map<String,String> params){
+        System.out.println("重置邮箱接口被调用");
+        Result result = userService.updateEmail(params);
+
+        return result;
     }
 }

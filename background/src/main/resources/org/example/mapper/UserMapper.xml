@@ -9,24 +9,20 @@
         <set>
             <if test="nickname != null">
                 <!--设置标识符来判断需不需要加逗号,保证语法正确-->
-                <bind name="hasUpdate" value="true"/>
-                nickname = #{nickname}
+                nickname = #{nickname},
             </if>
             <if test="name != null">
                 <!--若前面有更新则加上逗号-->
-                <if test="hasUpdate">,</if>
-                <bind name="hasUpdate" value="true"/>
-                name = #{name}
+                name = #{name},
             </if>
             <if test="gender != null">
-                <if test="hasUpdate">,</if>
-                <bind name="hasUpdate" value="true"/>
-                gender = #{gender}
+                gender = #{gender},
             </if>
             <if test="age != null">
-                <if test="hasUpdate">,</if>
-                <bind name="hasUpdate" value="true"/>
-                age = #{age}
+                age = #{age},
+            </if>
+            <if test="age == null">
+                age = null,
             </if>
         </set>
         where id = #{id}

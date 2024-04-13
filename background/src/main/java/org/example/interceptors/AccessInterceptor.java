@@ -24,12 +24,17 @@ public class AccessInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
         // 令牌验证
         String token = request.getHeader("Authorization");
+        /**
+         * jwt令牌是无状态的，即后端不会存任何数据，通过解析前端传过来的jwt获取用户信息，jwt有效载荷部分设置了jwt的生命周期
+         * 并存储了用户的相关基本信息
+         * 这里用Redis来存jwt并验证jwt是为了解决jwt令牌的  主动  失效功能。
+         */
         // 验证token
         try {
             // 从redis中获取到相同的token
             ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
-            String RedisToken = operations.get(token);
-            if(RedisToken == null){
+            String redisToken = operations.get(token);
+            if(redisToken == null){
                 throw new RuntimeException();
             }
             // 解析token获取业务数据

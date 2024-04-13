@@ -40,6 +40,9 @@ public interface UserMapper {
      */
     void update(User user);
 
+    @Update("update tb_user set email=#{email} where id =#{id}")
+    void updateEmail(String email, Integer id);
+
     /**
      * 通过邮箱查找用户
      * @param email 邮箱

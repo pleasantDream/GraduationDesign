@@ -143,6 +143,7 @@ public class RecordServiceImpl implements RecordService {
         // 获取更新后的 JSON 字符串
         String updatedJsonStr = json.toString();
 
+
         RequestBody body = RequestBody.create(mediaType, updatedJsonStr);
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/eb-instant?access_token="+accessToken)

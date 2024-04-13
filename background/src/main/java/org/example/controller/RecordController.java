@@ -28,21 +28,25 @@ public class RecordController {
         String result = recordService.recordPhysical(physical);
         return result;
     }
+
     @PostMapping("/blood")
     public String recordBlood(@RequestBody Blood blood) throws JSONException, IOException {
         String result = recordService.recordBlood(blood);
         return result;
     }
+
     @PostMapping("/pressure")
     public String recordPressure(@RequestBody Pressure pressure) throws JSONException, IOException {
         String result = recordService.recordPressure(pressure);
         return result;
     }
+
     @PostMapping("/temperature")
     public String recordTemperature(@RequestBody Temperature temperature) throws JSONException, IOException {
         String result = recordService.recordTemperature(temperature);
         return result;
     }
+
     @PostMapping("/urine")
     public String recordUrine(@RequestBody Urine urine) throws JSONException, IOException {
         String result = recordService.recordUrine(urine);

@@ -3,6 +3,8 @@ package org.example.service;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 
+import java.util.Map;
+
 /**
  * @author TZH
  */
@@ -46,7 +48,7 @@ public interface UserService {
      * @param user 用户实体类的对象
      * @return 更新用户基本信息是否成功
      */
-    void update(User user);
+    void updateInfo(User user);
 
     /**
      * 发送验证码给指定邮箱
@@ -54,4 +56,11 @@ public interface UserService {
      * @return 验证码
      */
     String emailValidation(String email);
+
+    /**
+     *
+     * @param params
+     * @return
+     */
+    Result updateEmail(Map<String, String> params);
 }
