@@ -23,6 +23,7 @@ public class RecordController {
     @Autowired
     private RecordService recordService;
 
+
     @PostMapping("/physical")
     public String recordPhysical(@RequestBody Physical physical) throws JSONException, IOException {
         String result = recordService.recordPhysical(physical);
