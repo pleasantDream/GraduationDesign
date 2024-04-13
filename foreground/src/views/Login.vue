@@ -2,7 +2,12 @@
 import { User, Lock, Connection, EditPen} from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { userLoginService, sendValidation, userRegisterService } from '../api/User.js'
+import { userLoginService, sendValidation, userRegisterService } from '../api/user.js'
+import { useRouter } from 'vue-router'
+import { useTokenStore } from '@/stores/token.js'
+const router = useRouter();
+const tokenStore = useTokenStore();
+
 //控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
 
@@ -27,14 +32,13 @@ const login = async () => {
     let result = await userLoginService(LoginData.value);
     if(result.code == 0){
         ElMessage.success('登录成功');
+        // 将登录成功得到的token存储到pinia中
+        tokenStore.setToken(result.data);
+        // 借助路由跳转到首页
+        router.push('/');
     }else{
         ElMessage.error(result);
     }
-    // 将登录成功得到的token存储到pinia中
-    // tokenStore.setToken(result.data);
-    // 借助路由跳转到首页
-    // router.push('/');
-
 }
 // 注册数据模型
 const RegisterData = ref({
@@ -81,6 +85,10 @@ const RegisterRules = {
     ],
     email: [
         { validator: validate_QQEmail, trigger: 'blur' }
+    ],
+    code: [
+        { required: true, message: '请输入验证码', trigger: 'blur' },
+        { min: 6, max: 6, message: '验证码为6位', trigger: 'blur' }
     ]
 }
 // 发送验证码
@@ -187,11 +195,11 @@ const register = async () => {
     height: 100vh;
     background-color: #fff;
 
-    // .bg {
-    //     background: url('@/assets/logo2.png') no-repeat 60% center / 240px auto,
-    //         url('@/assets/login_bg.jpg') no-repeat center / cover;
-    //     border-radius: 0 20px 20px 0;
-    // }
+    .bg {
+        background: url('@/assets/logo2.png') no-repeat 60% center / 240px auto,
+            url('@/assets/login_bg.jpg') no-repeat center / cover;
+        border-radius: 0 20px 20px 0;
+    }
 
     .form {
         display: flex;

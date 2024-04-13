@@ -24,3 +24,18 @@ export const userRegisterService = (registerData) => {
     }
     return request.post('/user/register', params);
 }
+
+// 获取用户详细信息
+export const userInfoService = () => {
+    return request.get('/user/userInfo')
+}
+
+// 修改用户信息
+export const userInfoUpdateService = (userInfoData) => {
+    return request.put('/user/info/update', userInfoData)
+}
+
+// 修改用户邮箱
+export const userEmailUpdateService = (emailData) => {
+    return request.patch('/user/email/update', emailData);
+}
