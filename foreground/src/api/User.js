@@ -39,3 +39,9 @@ export const userInfoUpdateService = (userInfoData) => {
 export const userEmailUpdateService = (emailData) => {
     return request.patch('/user/email/update', emailData);
 }
+
+// 修改用户密码
+export const userPasswordUpdateService = (pwdData) => {
+    // alert(pwdData)
+    return request.patch('/user/password/update', pwdData);
+}

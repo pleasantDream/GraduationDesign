@@ -78,11 +78,16 @@ getUserInfo();
 
                 <el-menu-item index="/user/emailReset">
                     <el-icon>
-                        <Management />
+                        <EditPen />
                     </el-icon>
                     <span>重置邮箱</span>
                 </el-menu-item>
-
+                <el-menu-item index="/user/PwdRest">
+                    <el-icon>
+                        <EditPen />
+                    </el-icon>
+                    <span>重置密码</span>
+                </el-menu-item>
                 <!-- <el-sub-menu>
                     <template #title>
                         <el-icon>
