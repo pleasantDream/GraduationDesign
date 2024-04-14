@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUserName(String username){
         User user = userMapper.findByUserName(username);
+
         return user;
     }
 
@@ -71,6 +72,7 @@ public class UserServiceImpl implements UserService {
         String md5String = Md5Util.getMD5String(password);
         // 添加
         userMapper.add(username, md5String, email);
+
         return Result.success();
     }
 
@@ -94,6 +96,7 @@ public class UserServiceImpl implements UserService {
         // 键值都存的一样
         // 和jwt设定的一天时间匹配
         operations.set(token, token, 24, TimeUnit.HOURS);
+
         return Result.success(token);
     }
 
@@ -133,10 +136,12 @@ public class UserServiceImpl implements UserService {
             htmlEmail.setMsg(code);
             //发送
             htmlEmail.send();
+
             return code;
         }
         catch (EmailException e) {
             e.printStackTrace();
+
             return "发送失败";
         }
     }
@@ -153,6 +158,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer id = (Integer)map.get("id");
         userMapper.updateEmail(email,id);
+
         return Result.success();
     }
 
