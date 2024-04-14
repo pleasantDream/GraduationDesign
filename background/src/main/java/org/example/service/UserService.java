@@ -63,4 +63,7 @@ public interface UserService {
      * @return
      */
     Result updateEmail(Map<String, String> params);
+
+
+    Result updatePassword(Map<String, String> params);
 }

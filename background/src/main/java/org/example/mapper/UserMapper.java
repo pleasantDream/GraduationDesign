@@ -50,4 +50,8 @@ public interface UserMapper {
      */
     @Select("select * from tb_user where email = #{email}")
     User findByUserEmail(String email);
+
+
+    @Update("update tb_user set password=#{password} where id=#{id}")
+    void updatePwd(String password, Integer id);
 }

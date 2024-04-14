@@ -46,6 +46,7 @@ public class UserController {
     ){
         // 得到响应结果
         Result result = userService.register(username, password, rePassword,email, code, reCode);
+
         return result;
     }
 
@@ -58,6 +59,7 @@ public class UserController {
     public String emailValidation(@Param("email") @Email String email){
         System.out.println("验证码发送接口被调用");
         String ValidateCode = userService.emailValidation(email);
+
         // 返回校验码给前端
         return ValidateCode;
     }
@@ -99,6 +101,7 @@ public class UserController {
         System.out.println("更新用户信息接口被调用");
         // @RequestBody User 注解将 json 数据转换成User 类型数据
         userService.updateInfo(user);
+
         return Result.success();
     }
 
@@ -106,6 +109,14 @@ public class UserController {
     public Result updateEmail(@RequestBody Map<String,String> params){
         System.out.println("重置邮箱接口被调用");
         Result result = userService.updateEmail(params);
+
+        return result;
+    }
+
+    @PatchMapping("/password/update")
+    public Result updatePassword(@RequestBody Map<String,String> params){
+        System.out.println("重置密码接口被调用");
+        Result result = userService.updatePassword(params);
 
         return result;
     }

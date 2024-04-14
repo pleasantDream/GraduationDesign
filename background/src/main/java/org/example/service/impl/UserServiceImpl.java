@@ -155,4 +155,27 @@ public class UserServiceImpl implements UserService {
         userMapper.updateEmail(email,id);
         return Result.success();
     }
+
+    @Override
+    public Result updatePassword(Map<String, String> params) {
+        String oldPwd =  params.get("oldPwd");
+        String newPwd =  params.get("newPwd");
+        String rePwd =  params.get("rePwd");
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String username = (String) map.get("username");
+        User user = userMapper.findByUserName(username);
+
+        if(!Md5Util.getMD5String(oldPwd).equals(user.getPassword())){
+            return Result.error("原密码错误");
+        }
+        if(!newPwd.equals(rePwd)){
+            return Result.error("两次密码不一致");
+        }
+        String md5String = Md5Util.getMD5String(newPwd);
+        Integer id = (Integer)map.get("id");
+        userMapper.updatePwd(md5String,id);
+
+        return Result.success();
+    }
 }
