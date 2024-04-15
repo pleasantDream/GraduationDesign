@@ -1,16 +1,25 @@
 package org.example.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.example.enums.ChatGptConstant;
 import org.example.mapper.RecordMapper;
 import org.example.pojo.*;
 import org.example.service.RecordService;
+import org.example.utils.ThreadLocalUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.xml.crypto.Data;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -126,6 +135,44 @@ public class RecordServiceImpl implements RecordService {
         // 往表中插入数据
         recordMapper.addUrine(urine);
         return result;
+    }
+
+    @Override
+    public Physical recordPhysicalGet() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Physical physical = recordMapper.getPhysical(userId);
+        System.out.println(physical);
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        // 构造一个 Map，包含 Physical 对象的属性
+//        Map<String, Object> jsonMap = new HashMap<>();
+//        jsonMap.put("性别", physical.getGender());
+//        jsonMap.put("年龄", physical.getAge());
+//        jsonMap.put("时间", physical.getTime().format(formatter));
+//        jsonMap.put("身高", physical.getHeight());
+//        jsonMap.put("体重", physical.getWeight());
+//        jsonMap.put("BMI", physical.getBmi());
+//        jsonMap.put("结果", physical.getResult());
+//
+//        // 将 Map 转换为 JSON 字符串
+//        String json =  objectMapper.writeValueAsString(jsonMap);
+//
+//        System.out.println(json);
+
+//        String gender = physical.getGender();
+//        Integer age = physical.getAge();
+//        LocalDateTime time = physical.getTime();
+//        Float height = physical.getHeight();
+//        Float weight = physical.getWeight();
+//        Float bmi = physical.getBmi();
+//        String result = physical.getResult();
+//
+//        // 原始JSOM字符串
+//        String jsonStr = "{\"性别\": \"gender\", \"年龄\": \"age\", \"时间\": \"time\", " +
+//                "\"身高\": \"height\", \"体重\": \"weight\", \"BMI\": \"bmi\", \"结果\": \"result\"}";
+        return physical;
     }
 
     public String wenXinYiYan(String content) throws IOException, JSONException {

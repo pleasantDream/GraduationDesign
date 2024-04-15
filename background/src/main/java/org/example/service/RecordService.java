@@ -1,7 +1,9 @@
 package org.example.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.pojo.*;
 
+import org.hibernate.validator.internal.util.StringHelper;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -57,4 +59,6 @@ public interface RecordService {
      * @throws IOException I/O 异常
      */
     String recordUrine(Urine urine) throws JSONException, IOException;
+
+    Physical recordPhysicalGet();
 }

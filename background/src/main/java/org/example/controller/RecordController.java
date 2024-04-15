@@ -1,14 +1,12 @@
 package org.example.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.pojo.*;
 import org.example.service.RecordService;
 
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -28,6 +26,13 @@ public class RecordController {
     public String recordPhysical(@RequestBody Physical physical) throws JSONException, IOException {
         String result = recordService.recordPhysical(physical);
         return result;
+    }
+
+    @GetMapping("/physical/get")
+    public Physical recordPhysicalGet() throws JSONException, JsonProcessingException {
+        System.out.println("获取体格测量数据");
+        Physical physical = recordService.recordPhysicalGet();
+        return physical;
     }
 
     @PostMapping("/blood")

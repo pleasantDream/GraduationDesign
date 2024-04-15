@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result login(String username, String password) {
-        User user = findByUserName(username);
+        User user = userMapper.findByUserName(username);
         if(user == null){
             return Result.error("该用户名未注册");
         }
@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = ThreadLocalUtil.get();
         String username = (String) map.get("username");
         User user = userMapper.findByUserName(username);
+        System.out.println(user);
         return user;
     }
 

@@ -2,6 +2,7 @@ package org.example.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.example.pojo.*;
 
 
@@ -50,4 +51,8 @@ public interface RecordMapper {
     @Insert("insert into tb_urine (gender,age,userId,time,sg,ph,glucose,protein,ket,bld,le,cc,result) values(#{gender}," +
             "#{age},#{userId},now(),#{sg},#{ph},#{glucose},#{protein},#{ket},#{bld},#{le},#{cc},#{result})")
     void addUrine(Urine urine);
+
+
+    @Select("select * from tb_physical where userid = #{userId}")
+    Physical getPhysical(Integer userId);
 }
