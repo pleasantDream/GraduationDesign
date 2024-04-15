@@ -8,10 +8,14 @@ import router from './router/index.js'
 import { createPinia } from 'pinia'
 import { createPersistedState } from 'pinia-persistedstate-plugin'
 
+// import ChartBlock from '@/components/ChartsBlock.vue'
+
 const pinia = createPinia()
 const persist = createPersistedState()
 pinia.use(persist)
 const app = createApp(App);
+
+// app.use(ChartBlock)
 app.use(router)
 app.use(pinia)
 app.use(ElementPlus);   // 使用饿了么组件

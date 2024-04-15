@@ -25,7 +25,7 @@ export const userRegisterService = (registerData) => {
     return request.post('/user/register', params);
 }
 
-// 获取用户详细信息
+// 获取用户信息
 export const userInfoService = () => {
     return request.get('/user/userInfo')
 }

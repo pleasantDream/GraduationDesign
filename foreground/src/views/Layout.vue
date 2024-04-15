@@ -10,18 +10,34 @@ import {
     CaretBottom
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
+
+
 // 获取用户详细信息
 import { userInfoService } from '@/api/user.js';
 import useUserInfoStore from '@/stores/userInfo.js'
-
 const UserInfoStore = useUserInfoStore();
-// 调用函数,获取用户详细信息
+// 获取用户基本信息
 const getUserInfo = async () => {
     let result = await userInfoService();
+    // alert(result.data.id)
     // 数据存储到Pinia中
     UserInfoStore.setInfo(result.data);
 }
 getUserInfo();
+
+
+// 获取用户体格测量数据
+import { getPhycialService } from '@/api/record.js'
+import usePhysicalStore from '@/stores/physical.js';
+const physicalStore = usePhysicalStore();
+const getPhysical = async () => {
+    let result = await getPhycialService();
+    // alert(result.id)
+    // 数据存储到Pinia中
+    physicalStore.setPhysical(result);
+}
+getPhysical();
+
 
 </script>
 
