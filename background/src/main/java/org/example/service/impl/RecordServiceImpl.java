@@ -41,7 +41,8 @@ public class RecordServiceImpl implements RecordService {
         sb.append(physical.getGender()).append("\n年龄:").append(physical.getAge());
         sb.append("\n身高: ").append(physical.getHeight()).append("米,");
         sb.append("\n体重: ").append(physical.getWeight()).append("千克,");
-        sb.append("\nBMI指数: ").append(physical.getBmi()).append("\n");
+        float bmi = physical.getWeight()/(physical.getHeight()*physical.getHeight());
+        sb.append("\nBMI指数: ").append(bmi).append("\n");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -49,6 +50,8 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(result);
         // 往Physical类的一个实例中添加分析结果
         physical.setResult(result);
+
+        physical.setBmi(bmi);
         // 往表中插入数据
         recordMapper.addPhysical(physical);
         return result;
@@ -57,7 +60,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public String recordBlood(Blood blood) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append("你是一个专业医生，现在我完成了血液分析的体检项目,结果为:\n性别:");
         sb.append(blood.getGender()).append("\n年龄:").append(blood.getAge());
         sb.append("\n血红蛋白: ").append(blood.getHb()).append("g/l,");
         sb.append("\n血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
@@ -79,7 +82,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public String recordPressure(Pressure pressure) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append("你是一个专业医生，现在我完成了血压测量的体检项目,结果为:\n性别:");
         sb.append(pressure.getGender()).append("\n年龄:").append(pressure.getAge());
         sb.append("\n高压: ").append(pressure.getHighPressure()).append("mmHg,");
         sb.append("\n低压: ").append(pressure.getLowPressure()).append("mmHg\n");
@@ -98,7 +101,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public String recordTemperature(Temperature temperature) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append("你是一个专业医生，现在我完成了体温测量的体检项目,结果为:\n性别:");
         sb.append(temperature.getGender()).append("\n年龄:").append(temperature.getAge());
         sb.append("\n体温: ").append(temperature.getTemperature()).append("摄氏度\n");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
@@ -116,7 +119,7 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public String recordUrine(Urine urine) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
+        sb.append("你是一个专业医生，现在我完成了尿液分析的体检项目,结果为:\n性别:");
         sb.append(urine.getGender()).append("\n年龄:").append(urine.getAge());
         sb.append("\n尿液比重: ").append(urine.getSg()).append(",");
         sb.append("\n尿液PH值: ").append(urine.getPh()).append(",");
@@ -144,34 +147,6 @@ public class RecordServiceImpl implements RecordService {
         Physical physical = recordMapper.getPhysical(userId);
         System.out.println(physical);
 
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        // 构造一个 Map，包含 Physical 对象的属性
-//        Map<String, Object> jsonMap = new HashMap<>();
-//        jsonMap.put("性别", physical.getGender());
-//        jsonMap.put("年龄", physical.getAge());
-//        jsonMap.put("时间", physical.getTime().format(formatter));
-//        jsonMap.put("身高", physical.getHeight());
-//        jsonMap.put("体重", physical.getWeight());
-//        jsonMap.put("BMI", physical.getBmi());
-//        jsonMap.put("结果", physical.getResult());
-//
-//        // 将 Map 转换为 JSON 字符串
-//        String json =  objectMapper.writeValueAsString(jsonMap);
-//
-//        System.out.println(json);
-
-//        String gender = physical.getGender();
-//        Integer age = physical.getAge();
-//        LocalDateTime time = physical.getTime();
-//        Float height = physical.getHeight();
-//        Float weight = physical.getWeight();
-//        Float bmi = physical.getBmi();
-//        String result = physical.getResult();
-//
-//        // 原始JSOM字符串
-//        String jsonStr = "{\"性别\": \"gender\", \"年龄\": \"age\", \"时间\": \"time\", " +
-//                "\"身高\": \"height\", \"体重\": \"weight\", \"BMI\": \"bmi\", \"结果\": \"result\"}";
         return physical;
     }
 
