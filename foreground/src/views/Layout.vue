@@ -25,20 +25,6 @@ const getUserInfo = async () => {
 }
 getUserInfo();
 
-
-// 获取用户体格测量数据
-import { getPhycialService } from '@/api/record.js'
-import usePhysicalStore from '@/stores/physical.js';
-const physicalStore = usePhysicalStore();
-const getPhysical = async () => {
-    let result = await getPhycialService();
-    // alert(result.id)
-    // 数据存储到Pinia中
-    physicalStore.setPhysical(result);
-}
-getPhysical();
-
-
 </script>
 
 <template>
@@ -104,32 +90,6 @@ getPhysical();
                     </el-icon>
                     <span>重置密码</span>
                 </el-menu-item>
-                <!-- <el-sub-menu>
-                    <template #title>
-                        <el-icon>
-                            <UserFilled />
-                        </el-icon>
-                        <span>个人中心</span>
-                    </template>
-                    <el-menu-item>
-                        <el-icon>
-                            <User />
-                        </el-icon>
-                        <span>基本资料</span>
-                    </el-menu-item>
-                    <el-menu-item>
-                        <el-icon>
-                            <Crop />
-                        </el-icon>
-                        <span>更换头像</span>
-                    </el-menu-item>
-                    <el-menu-item>
-                        <el-icon>
-                            <EditPen />
-                        </el-icon>
-                        <span>重置密码</span>
-                    </el-menu-item>
-                </el-sub-menu> -->
             </el-menu>
         </el-aside>
         <!-- 右侧主区域 -->
