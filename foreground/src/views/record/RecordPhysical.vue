@@ -21,6 +21,9 @@
                     <el-form-item label="体重">
                         <el-input v-model="physical.weight"></el-input>
                     </el-form-item>
+                    <el-form-item label="分析和建议">
+                        <el-input v-model="physical.result" type="textarea" />
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="physicalUpdate">提交修改</el-button>
                         <el-button type="primary" @click="userInfoUpdate" style="margin-left: 145px;">咨询</el-button>
@@ -29,7 +32,7 @@
             </el-col>
             <!-- 与左边的col相距32px -->
             <el-col :span="12" style="margin-left: 32px;">
-                <div ref="echartsContainer" style="width: 500px; height: 350px;"></div>
+                <div ref="echartsContainer" style="width: 500px; height: 380px;"></div>
             </el-col>
         </el-row>
     </el-card>
@@ -40,10 +43,10 @@
 import { ref, onMounted } from 'vue';
 import { getPhycialService } from '@/api/record.js';
 
-// 创建响应式引用来保存物理数据
+// 创建响应式引用来保存体格测量数据
 const physical = ref({});
 
-// 异步获取身体测量数据
+// 异步获取体格测量数据
 const getPhysicalData = async () => {
     try {
         const result = await getPhycialService();
