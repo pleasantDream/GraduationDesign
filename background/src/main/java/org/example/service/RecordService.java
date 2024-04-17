@@ -61,4 +61,12 @@ public interface RecordService {
     String recordUrine(Urine urine) throws JSONException, IOException;
 
     Physical recordPhysicalGet();
+
+    Pressure recordPressureGet();
+
+    Blood recordBloodGet();
+
+    Temperature recordTemperatureGet();
+
+    Urine recordUrineGet();
 }

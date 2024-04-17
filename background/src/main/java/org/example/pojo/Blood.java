@@ -17,8 +17,8 @@ public class Blood {
     /**
      * 血液检测
      * hb: 血红蛋白(克/升)
-     * wbc: 白细胞计数( WBC * 10^9/升)
-     * plt: 血小板计数( WBC * 10^9/升)
+     * wbc: 白细胞计数( wbc * 10^9/升)
+     * plt: 血小板计数( plt * 10^9/升)
      * glucose: 血糖(毫克/分升)(空腹状态)
      */
     private float hb;

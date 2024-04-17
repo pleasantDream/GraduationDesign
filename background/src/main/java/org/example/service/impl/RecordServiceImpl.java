@@ -150,6 +150,46 @@ public class RecordServiceImpl implements RecordService {
         return physical;
     }
 
+    @Override
+    public Pressure recordPressureGet() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Pressure pressure = recordMapper.getPressure(userId);
+        System.out.println(pressure);
+
+        return pressure;
+    }
+
+    @Override
+    public Blood recordBloodGet() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Blood blood = recordMapper.getBlood(userId);
+        System.out.println(blood);
+
+        return blood;
+    }
+
+    @Override
+    public Temperature recordTemperatureGet() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Temperature temperature = recordMapper.getTemperature(userId);
+        System.out.println(temperature);
+
+        return temperature;
+    }
+
+    @Override
+    public Urine recordUrineGet() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        Urine urine = recordMapper.getUrine(userId);
+        System.out.println(urine);
+
+        return urine;
+    }
+
     public String wenXinYiYan(String content) throws IOException, JSONException {
         System.out.println("User:"+content);
         String accessToken = getAccessToken();

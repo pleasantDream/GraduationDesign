@@ -55,4 +55,16 @@ public interface RecordMapper {
 
     @Select("select * from tb_physical where userid = #{userId}")
     Physical getPhysical(Integer userId);
+
+    @Select("select * from tb_pressure where userid = #{userId}")
+    Pressure getPressure(Integer userId);
+
+    @Select("select * from tb_blood where userid = #{userId}")
+    Blood getBlood(Integer userId);
+
+    @Select("select * from tb_temperature where userid = #{userId}")
+    Temperature getTemperature(Integer userId);
+
+    @Select("select * from tb_urine where userid = #{userId}")
+    Urine getUrine(Integer userId);
 }
