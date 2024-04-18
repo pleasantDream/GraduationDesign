@@ -26,7 +26,6 @@ const routes = [
             { path: '/user/info', component: UserInfoVue },
             { path: '/user/emailReset', component: UserEmailResetVue },
             { path: '/user/PwdRest', component: UserPwdResetVue }
-            
         ]
     }
 ]

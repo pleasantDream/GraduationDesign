@@ -51,7 +51,11 @@ const rules = {
 const userInfoUpdate = async () => {
     // 调用接口
     let result = await userInfoUpdateService(userInfo.value);
-    ElMessage.success('修改成功');
+    if (result.code == 0) {
+        ElMessage.success('修改成功');
+    } else {
+        ElMessage.error(result);
+    }
     // 修改Pinia中的个人信息
     userInfoStore.setInfo(userInfo.value);
 }

@@ -38,7 +38,7 @@ getUserInfo();
                         <el-icon>
                             <UserFilled />
                         </el-icon>
-                        <span>体检分析</span>
+                        <span>体检记录</span>
                     </template>
                     <el-menu-item index="/record/RecordPhysical">
                         <el-icon>
@@ -71,6 +71,7 @@ getUserInfo();
                         <span>尿液分析</span>
                     </el-menu-item>
                 </el-sub-menu>
+            
                 <el-menu-item index="/user/info">
                     <el-icon>
                         <Management />

@@ -15,18 +15,19 @@
                     <el-form-item label="年龄">
                         <el-input v-model="physical.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="身高">
+                    <el-form-item label="身高(米)">
                         <el-input v-model="physical.height"></el-input>
                     </el-form-item>
-                    <el-form-item label="体重">
+                    <el-form-item label="体重(千克)">
                         <el-input v-model="physical.weight"></el-input>
                     </el-form-item>
                     <el-form-item label="分析和建议">
                         <el-input v-model="physical.result" type="textarea" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="physicalUpdate">提交修改</el-button>
-                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 145px;">咨询</el-button>
+                        <el-button type="primary" @click="physicalAdd()">新增</el-button>
+                        <el-button type="primary" @click="physicalUpdate()" style="margin-left: 35px;">提交修改</el-button>
+                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 40px;">咨询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -40,8 +41,36 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
-import { getPhycialService } from '@/api/record.js';
+import { addPhycialService, getPhycialService, UpdatePhycialService } from '@/api/record.js';
+
+var flag = 1; // 为0表示数据库中没有该用户这个项目的体检数据,可以新增
+const physicalAdd = async()=>{
+    console.log(flag)
+    if(flag == 1) {
+        ElMessage.error("已有体格测量记录,请点击提交修改");
+        return;
+    }
+    let result = await addPhycialService(physical.value);
+    if (result.code == 0) {
+        ElMessage.success('新增成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
+const physicalUpdate = async()=>{
+    if(flag == 0){
+        ElMessage.error("未有体格测量记录,请点击新增");
+        return;
+    }
+    let result = await UpdatePhycialService(physical.value);
+    if (result.code == 0) {
+        ElMessage.success('修改成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
 
 // 创建响应式引用来保存体格测量数据
 const physical = ref({});
@@ -68,6 +97,13 @@ const echartsContainer = ref(null);
 // 初始化图表
 const initECharts = () => {
     if (!physical.value) {
+        flag = 0;
+        physical.value = {
+            gender:"",
+            age:"",
+            height:"",
+            weight:""
+        }
         return; // 如果身体测量数据还未加载完成，则不进行初始化操作
     }
 
@@ -114,7 +150,7 @@ const initECharts = () => {
             data: [physical.value.height * 100, physical.value.weight * 2, physical.value.bmi]
         },
         {
-            name: "较低",
+            name: "较高",
             type: 'bar',
             data: [null, null, 23.9]
         }

@@ -37,6 +37,7 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
 import { getTemperatureService } from '@/api/record.js';
 

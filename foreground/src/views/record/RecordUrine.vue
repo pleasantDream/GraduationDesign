@@ -46,6 +46,7 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
 import { getUrineService } from '@/api/record.js';
 

@@ -31,8 +31,9 @@
                         <el-input v-model="blood.result" type="textarea" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="physicalUpdate">提交修改</el-button>
-                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 126px;">咨询</el-button>
+                        <el-button type="primary" @click="bloodAdd()">新增</el-button>
+                        <el-button type="primary" @click="bloodUpdate()" style="margin-left: 24px;">提交修改</el-button>
+                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 34px;">咨询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -46,13 +47,42 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
-import { getBloodService } from '@/api/record.js';
+import { addBloodService, getBloodService, UpdateBloodService } from '@/api/record.js';
 
-// 创建响应式引用来保存体格测量数据
+var flag = 1; // 为0表示数据库中没有该用户这个项目的体检数据,可以新增
+const bloodAdd = async () => {
+    console.log(flag)
+    if (flag == 1) {
+        ElMessage.error("已有体格测量记录,请点击提交修改");
+        return;
+    }
+    let result = await addBloodService(blood.value);
+    if (result.code == 0) {
+        ElMessage.success('新增成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
+const bloodUpdate = async () => {
+    if (flag == 0) {
+        ElMessage.error("未有体格测量记录,请点击新增");
+        return;
+    }
+    let result = await UpdateBloodService(blood.value);
+    if (result.code == 0) {
+        ElMessage.success('修改成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
+
+
+// 创建响应式引用来保存测量数据
 const blood = ref({});
 
-// 异步获取体格测量数据
+// 异步获取测量数据
 const getBloodData = async () => {
     try {
         const result = await getBloodService();
@@ -75,6 +105,15 @@ const echartsContainer = ref(null);
 // 初始化图表
 const initECharts = () => {
     if (!blood.value) {
+        flag = 0;
+        blood.value = {
+            gender:"",
+            aga:"",
+            hb:"",
+            wbc:"",
+            plt:"",
+            glucose:""
+        }
         return; // 如果身体测量数据还未加载完成，则不进行初始化操作
     }
 
