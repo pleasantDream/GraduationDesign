@@ -22,7 +22,7 @@ public interface RecordService {
      * @throws JSONException Json格式异常
      * @throws IOException I/O 异常
      */
-    String recordPhysical(Physical physical) throws JSONException, IOException;
+    Result recordPhysical(Physical physical) throws JSONException, IOException;
 
     /**
      * 血液分析记录
@@ -31,7 +31,7 @@ public interface RecordService {
      * @throws JSONException Json格式异常
      * @throws IOException I/O 异常
      */
-    String recordBlood(Blood blood) throws JSONException, IOException;
+    Result recordBlood(Blood blood) throws JSONException, IOException;
 
     /**
      * 血压分析记录
@@ -40,7 +40,7 @@ public interface RecordService {
      * @throws JSONException Json格式异常
      * @throws IOException I/O 异常
      */
-    String recordPressure(Pressure pressure) throws JSONException, IOException;
+    Result recordPressure(Pressure pressure) throws JSONException, IOException;
 
     /**
      * 温度分析记录
@@ -49,7 +49,7 @@ public interface RecordService {
      * @throws JSONException Json格式异常
      * @throws IOException I/O 异常
      */
-    String recordTemperature(Temperature temperature) throws JSONException, IOException;
+    Result recordTemperature(Temperature temperature) throws JSONException, IOException;
 
     /**
      * 尿液分析记录
@@ -58,7 +58,7 @@ public interface RecordService {
      * @throws JSONException Json格式异常
      * @throws IOException I/O 异常
      */
-    String recordUrine(Urine urine) throws JSONException, IOException;
+    Result recordUrine(Urine urine) throws JSONException, IOException;
 
     Physical recordPhysicalGet();
 
@@ -69,4 +69,10 @@ public interface RecordService {
     Temperature recordTemperatureGet();
 
     Urine recordUrineGet();
+
+    Result recordPhysicalUpdate(Physical physical) throws JSONException, IOException;
+
+    Result recordBloodUpdate(Blood blood) throws JSONException, IOException;
+
+    Result recordPressureUpdate(Pressure pressure) throws JSONException, IOException;
 }

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingDeque;
 
 
 /**
@@ -33,8 +34,7 @@ public class RecordServiceImpl implements RecordService {
     @Autowired
     private RecordMapper recordMapper;
 
-    @Override
-    public String recordPhysical(Physical physical) throws JSONException, IOException {
+    public Physical physicalUtil(Physical physical) throws JSONException, IOException {
         // 多次字符串拼接场景下StringBuilder比String更快
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
@@ -48,17 +48,25 @@ public class RecordServiceImpl implements RecordService {
         // 得到分析建议结果
         String result = wenXinYiYan(content);
         System.out.println(result);
-        // 往Physical类的一个实例中添加分析结果
+        // 往Physical类的一个实例中添加结果
         physical.setResult(result);
-
         physical.setBmi(bmi);
-        // 往表中插入数据
-        recordMapper.addPhysical(physical);
-        return result;
+        return physical;
     }
 
     @Override
-    public String recordBlood(Blood blood) throws JSONException, IOException {
+    public Result recordPhysical(Physical physical) throws JSONException, IOException {
+        Physical physical1 = physicalUtil(physical);
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        physical1.setUserId(userId);
+        // 往表中插入数据
+        recordMapper.addPhysical(physical1);
+        return Result.success();
+    }
+
+    public Blood BloodUtil(Blood blood) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了血液分析的体检项目,结果为:\n性别:");
         sb.append(blood.getGender()).append("\n年龄:").append(blood.getAge());
@@ -71,16 +79,25 @@ public class RecordServiceImpl implements RecordService {
         // 得到分析建议结果
         String result = wenXinYiYan(content);
         System.out.println(result);
-        // 往Physical类的一个实例中添加分析结果
+        // 往Blood类的一个实例中添加分析结果
         blood.setResult(result);
-        // 往表中插入数据
-        recordMapper.addBlood(blood);
-        return result;
 
+        return blood;
     }
 
     @Override
-    public String recordPressure(Pressure pressure) throws JSONException, IOException {
+    public Result recordBlood(Blood blood) throws JSONException, IOException {
+        Blood blood1 = BloodUtil(blood);
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        blood1.setUserId(userId);
+        // 往表中插入数据
+        recordMapper.addBlood(blood1);
+        return Result.success();
+    }
+
+    public Pressure pressureUtil(Pressure pressure) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了血压测量的体检项目,结果为:\n性别:");
         sb.append(pressure.getGender()).append("\n年龄:").append(pressure.getAge());
@@ -93,13 +110,23 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(result);
         // 往Physical类的一个实例中添加分析结果
         pressure.setResult(result);
-        // 往表中插入数据
-        recordMapper.addPressure(pressure);
-        return result;
+
+        return pressure;
     }
 
     @Override
-    public String recordTemperature(Temperature temperature) throws JSONException, IOException {
+    public Result recordPressure(Pressure pressure) throws JSONException, IOException {
+        Pressure pressure1 = pressureUtil(pressure);
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        pressure1.setUserId(userId);
+        // 往表中插入数据
+        recordMapper.addPressure(pressure1);
+        return Result.success();
+    }
+
+    public Temperature TemperatureUtil(Temperature temperature) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了体温测量的体检项目,结果为:\n性别:");
         sb.append(temperature.getGender()).append("\n年龄:").append(temperature.getAge());
@@ -111,23 +138,30 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(result);
         // 往Physical类的一个实例中添加分析结果
         temperature.setResult(result);
-        // 往表中插入数据
-        recordMapper.addTemperature(temperature);
-        return result;
+
+        return temperature;
     }
 
     @Override
-    public String recordUrine(Urine urine) throws JSONException, IOException {
+    public Result recordTemperature(Temperature temperature) throws JSONException, IOException {
+        Temperature temperature1 = TemperatureUtil(temperature);
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        temperature1.setUserId(userId);
+        // 往表中插入数据
+        recordMapper.addTemperature(temperature1);
+        return Result.success();
+    }
+
+    public Urine UrineUtil(Urine urine) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了尿液分析的体检项目,结果为:\n性别:");
         sb.append(urine.getGender()).append("\n年龄:").append(urine.getAge());
         sb.append("\n尿液比重: ").append(urine.getSg()).append(",");
         sb.append("\n尿液PH值: ").append(urine.getPh()).append(",");
         sb.append("\n蛋白质: ").append(urine.getProtein()).append("mg/dl,");
-        sb.append("\n酮体: ").append(urine.getKet()).append(",");
-        sb.append("\n潜血: ").append(urine.getBld()).append(",");
-        sb.append("\n白细胞酯酶: ").append(urine.getLe()).append("U/l,");
-        sb.append("\n细胞计数: ").append(urine.getCc()).append("亿cells/ml\n");
+        sb.append("\n白细胞酯酶: ").append(urine.getLe()).append("U/l\n");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -135,9 +169,20 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(result);
         // 往Physical类的一个实例中添加分析结果
         urine.setResult(result);
+
+        return urine;
+    }
+
+    @Override
+    public Result recordUrine(Urine urine) throws JSONException, IOException {
+        Urine urine1 = UrineUtil(urine);
+
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        urine1.setUserId(userId);
         // 往表中插入数据
-        recordMapper.addUrine(urine);
-        return result;
+        recordMapper.addUrine(urine1);
+        return Result.success();
     }
 
     @Override
@@ -189,6 +234,42 @@ public class RecordServiceImpl implements RecordService {
 
         return urine;
     }
+
+    @Override
+    public Result recordPhysicalUpdate(Physical physical) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        Physical physical1 = physicalUtil(physical);
+        physical1.setUserId(userId);
+        recordMapper.physicalUpdate(physical1);
+
+        System.out.println(Result.success());
+        return Result.success();
+    }
+
+    @Override
+    public Result recordBloodUpdate(Blood blood) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        Blood blood1 = BloodUtil(blood);
+        blood1.setUserId(userId);
+        recordMapper.bloodUpdate(blood1);
+        return Result.success();
+    }
+
+    @Override
+    public Result recordPressureUpdate(Pressure pressure) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        Pressure pressure1 = pressureUtil(pressure);
+        pressure1.setUserId(userId);
+        recordMapper.pressureUpdate(pressure1);
+        return Result.success();
+    }
+
 
     public String wenXinYiYan(String content) throws IOException, JSONException {
         System.out.println("User:"+content);

@@ -23,8 +23,10 @@ public class RecordController {
 
 
     @PostMapping("/physical")
-    public String recordPhysical(@RequestBody Physical physical) throws JSONException, IOException {
-        String result = recordService.recordPhysical(physical);
+    public Result recordPhysical(@RequestBody Physical physical) throws JSONException, IOException {
+        System.out.println("新增体格测量数据");
+        System.out.println(physical.getHeight());
+        Result result = recordService.recordPhysical(physical);
         return result;
     }
 
@@ -35,9 +37,18 @@ public class RecordController {
         return physical;
     }
 
+    @PostMapping("/physical/update")
+    public Result recordPhysicalUpdate(@RequestBody Physical physical) throws JSONException, IOException {
+        System.out.println("更新体格测量数据");
+        Result result = recordService.recordPhysicalUpdate(physical);
+
+        return result;
+    }
+
+
     @PostMapping("/blood")
-    public String recordBlood(@RequestBody Blood blood) throws JSONException, IOException {
-        String result = recordService.recordBlood(blood);
+    public Result recordBlood(@RequestBody Blood blood) throws JSONException, IOException {
+        Result result = recordService.recordBlood(blood);
         return result;
     }
     @GetMapping("/blood/get")
@@ -47,9 +58,18 @@ public class RecordController {
         return blood;
     }
 
+    @PostMapping("/blood/update")
+    public Result recordBloodUpdate(@RequestBody Blood blood) throws JSONException, IOException {
+        System.out.println("更新血液分析数据");
+        Result result = recordService.recordBloodUpdate(blood);
+
+        return result;
+    }
+
+
     @PostMapping("/pressure")
-    public String recordPressure(@RequestBody Pressure pressure) throws JSONException, IOException {
-        String result = recordService.recordPressure(pressure);
+    public Result recordPressure(@RequestBody Pressure pressure) throws JSONException, IOException {
+        Result result = recordService.recordPressure(pressure);
         return result;
     }
     @GetMapping("/pressure/get")
@@ -58,10 +78,17 @@ public class RecordController {
         Pressure pressure = recordService.recordPressureGet();
         return pressure;
     }
+    @PostMapping("/pressure/update")
+    public Result recordPressureUpdate(@RequestBody Pressure pressure) throws JSONException, IOException {
+        System.out.println("更新血压测量数据");
+        Result result = recordService.recordPressureUpdate(pressure);
+        return result;
+    }
+
 
     @PostMapping("/temperature")
-    public String recordTemperature(@RequestBody Temperature temperature) throws JSONException, IOException {
-        String result = recordService.recordTemperature(temperature);
+    public Result recordTemperature(@RequestBody Temperature temperature) throws JSONException, IOException {
+        Result result = recordService.recordTemperature(temperature);
         return result;
     }
     @GetMapping("/temperature/get")
@@ -72,8 +99,8 @@ public class RecordController {
     }
 
     @PostMapping("/urine")
-    public String recordUrine(@RequestBody Urine urine) throws JSONException, IOException {
-        String result = recordService.recordUrine(urine);
+    public Result recordUrine(@RequestBody Urine urine) throws JSONException, IOException {
+        Result result = recordService.recordUrine(urine);
         return result;
     }
     @GetMapping("/urine/get")

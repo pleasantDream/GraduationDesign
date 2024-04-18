@@ -3,6 +3,7 @@ package org.example.mapper;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.example.pojo.*;
 
 
@@ -67,4 +68,17 @@ public interface RecordMapper {
 
     @Select("select * from tb_urine where userid = #{userId}")
     Urine getUrine(Integer userId);
+
+    @Update("update tb_physical set gender=#{gender}, age=#{age}, time=now(), height=#{height}, " +
+            "weight=#{weight}, bmi=#{bmi}, result=#{result} where userid=#{userId}")
+    void physicalUpdate(Physical physical);
+
+
+    @Update("update tb_blood set gender=#{gender}, age=#{age}, time=now(), hb=#{hb}, wbc=#{wbc}, " +
+            "plt=#{plt}, glucose=#{glucose}, result=#{result} where userid=#{userId}")
+    void bloodUpdate(Blood blood);
+
+    @Update("update tb_pressure set gender=#{gender}, age=#{age}, time=now(), highpressure=#{highPressure}," +
+            "lowpressure=#{lowPressure} where userid=#{userId}")
+    void pressureUpdate(Pressure pressure1);
 }
