@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.DrbgParameters;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,10 +31,12 @@ public class UserController {
      * 注册
      * @param username  用户名
      * @param password 密码
-     * @param email 邮箱
+     * @param email 用户最后输入的邮箱
+     * @param reEmail 发送验证码用的邮箱
      * @param code 用户输入的验证码
      * @param reCode 前端收到的验证码
      * @return 注册是否成功
+     * 防止用户发送验证码后修改邮箱
      */
     @PostMapping("/register")
     public Result register(
@@ -41,11 +44,12 @@ public class UserController {
         @Param("password") String password,
         @Param("password") String rePassword,
         @Param("email") @Email String email,
+        @Param("reEmail") @Email String reEmail,
         @Param("code") String code,
         @Param("reCode") String reCode
     ){
         // 得到响应结果
-        Result result = userService.register(username, password, rePassword,email, code, reCode);
+        Result result = userService.register(username, password, rePassword,email,reEmail, code, reCode);
 
         return result;
     }
@@ -56,12 +60,12 @@ public class UserController {
      * @return 发送验证码给邮箱同时将其返回给前端
      */
     @GetMapping("/register")
-    public String emailValidation(@Param("email") @Email String email){
+    public Map<String,String> emailValidation(@Param("email") @Email String email){
         System.out.println("验证码发送接口被调用");
-        String ValidateCode = userService.emailValidation(email);
+        Map<String,String> map  = userService.emailValidation(email);
 
-        // 返回校验码给前端
-        return ValidateCode;
+        // 返回验证码和对应的邮箱给前端
+        return map;
     }
 
 

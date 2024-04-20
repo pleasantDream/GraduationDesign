@@ -98,6 +98,13 @@ public class RecordController {
         return temperature;
     }
 
+    @PostMapping("/temperature/update")
+    public Result recordTemperatureUpdate(@RequestBody Temperature temperature) throws JSONException, IOException {
+        System.out.println("更新体温测量数据");
+        Result result = recordService.recordTemperatureUpdate(temperature);
+        return result;
+    }
+
     @PostMapping("/urine")
     public Result recordUrine(@RequestBody Urine urine) throws JSONException, IOException {
         Result result = recordService.recordUrine(urine);
@@ -110,4 +117,10 @@ public class RecordController {
         return urine;
     }
 
+    @PostMapping("/urine/update")
+    public Result recordUrineUpdate(@RequestBody Urine Urine) throws JSONException, IOException {
+        System.out.println("更新尿液测分析数据");
+        Result result = recordService.recordUrineUpdate(Urine);
+        return result;
+    }
 }

@@ -75,4 +75,8 @@ public interface RecordService {
     Result recordBloodUpdate(Blood blood) throws JSONException, IOException;
 
     Result recordPressureUpdate(Pressure pressure) throws JSONException, IOException;
+
+    Result recordTemperatureUpdate(Temperature temperature) throws JSONException, IOException;
+
+    Result recordUrineUpdate(Urine urine) throws JSONException, IOException;
 }

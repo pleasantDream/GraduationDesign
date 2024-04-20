@@ -49,7 +49,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result<User> register(String username, String password, String rePassword, String email, String code, String reCode) {
+    public Result<User> register(String username, String password, String rePassword, String email,
+                                 String reEmail, String code, String reCode) {
+        // 防止用户在发送验证码后修改邮箱
+        if (email==null || email.equals("") || !email.equals(reEmail)){
+            return Result.error("邮箱被修改");
+        }
+
         // 确认
         if(!password.equals(rePassword)){
             return Result.error("两次密码输入不一致");
@@ -64,8 +70,8 @@ public class UserServiceImpl implements UserService {
             return Result.error("该邮箱已被使用");
         }
 
-        // 验证码验证
-        if(!code.equals(reCode)){
+        // 验证码验证, 当用户未点击发送验证码, 直接点击注册按钮
+        if(code == null || code.equals("") || !code.equals(reCode)){
             return Result.error("验证码错误");
         }
         // 加密
@@ -115,7 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String emailValidation(String email) {
+    public Map<String, String> emailValidation(String email) {
         try {
             //创建一个Html实例对象
             HtmlEmail htmlEmail = new HtmlEmail();
@@ -138,12 +144,15 @@ public class UserServiceImpl implements UserService {
             //发送
             htmlEmail.send();
 
-            return code;
+            Map<String, String> map = new HashMap<>();
+            map.put("userEmail", email);
+            map.put("code", code);
+            return map;
         }
         catch (EmailException e) {
             e.printStackTrace();
-
-            return "发送失败";
+            System.out.println("发送失败");
+            return new HashMap<String, String>();
         }
     }
 

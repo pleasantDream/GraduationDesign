@@ -49,8 +49,8 @@ public interface RecordMapper {
      * 尿液分析
      * @param urine 尿液类实例
      */
-    @Insert("insert into tb_urine (gender,age,userId,time,sg,ph,glucose,protein,ket,bld,le,cc,result) values(#{gender}," +
-            "#{age},#{userId},now(),#{sg},#{ph},#{glucose},#{protein},#{ket},#{bld},#{le},#{cc},#{result})")
+    @Insert("insert into tb_urine (gender,age,userId,time,sg,ph,protein,le,result) values(#{gender}," +
+            "#{age},#{userId},now(),#{sg},#{ph},#{protein},#{le},#{result})")
     void addUrine(Urine urine);
 
 
@@ -79,6 +79,14 @@ public interface RecordMapper {
     void bloodUpdate(Blood blood);
 
     @Update("update tb_pressure set gender=#{gender}, age=#{age}, time=now(), highpressure=#{highPressure}," +
-            "lowpressure=#{lowPressure} where userid=#{userId}")
+            "lowpressure=#{lowPressure}, result=#{result} where userid=#{userId}")
     void pressureUpdate(Pressure pressure1);
+
+    @Update("update tb_temperature set gender=#{gender}, age=#{age}, time=now(), temperature=#{temperature}," +
+            "result=#{result} where userid=#{userId}")
+    void temperatureUpdate(Temperature temperature1);
+
+    @Update("update tb_urine set gender=#{gender}, age=#{age}, time=now(), sg=#{sg}," +
+            "ph=#{ph}, protein=#{protein}, le=#{le}, result=#{result} where userid=#{userId}")
+    void urineUpdate(Urine urine1);
 }

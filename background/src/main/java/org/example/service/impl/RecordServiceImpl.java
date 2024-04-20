@@ -126,7 +126,7 @@ public class RecordServiceImpl implements RecordService {
         return Result.success();
     }
 
-    public Temperature TemperatureUtil(Temperature temperature) throws JSONException, IOException {
+    public Temperature temperatureUtil(Temperature temperature) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了体温测量的体检项目,结果为:\n性别:");
         sb.append(temperature.getGender()).append("\n年龄:").append(temperature.getAge());
@@ -144,7 +144,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public Result recordTemperature(Temperature temperature) throws JSONException, IOException {
-        Temperature temperature1 = TemperatureUtil(temperature);
+        Temperature temperature1 = temperatureUtil(temperature);
 
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
@@ -267,6 +267,28 @@ public class RecordServiceImpl implements RecordService {
         Pressure pressure1 = pressureUtil(pressure);
         pressure1.setUserId(userId);
         recordMapper.pressureUpdate(pressure1);
+        return Result.success();
+    }
+
+    @Override
+    public Result recordTemperatureUpdate(Temperature temperature) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        Temperature temperature1 = temperatureUtil(temperature);
+        temperature1.setUserId(userId);
+        recordMapper.temperatureUpdate(temperature1);
+        return Result.success();
+    }
+
+    @Override
+    public Result recordUrineUpdate(Urine urine) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        Urine urine1 = UrineUtil(urine);
+        urine1.setUserId(userId);
+        recordMapper.urineUpdate(urine1);
         return Result.success();
     }
 

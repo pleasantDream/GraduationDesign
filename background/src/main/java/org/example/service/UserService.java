@@ -27,7 +27,8 @@ public interface UserService {
      * @param reCode 前端收到的验证码
      * @return 注册是否成功
      */
-    Result<User> register(String username, String password, String rePassword, String email, String code, String reCode);
+    Result<User> register(String username, String password, String rePassword, String email, String reEmail,
+                          String code, String reCode);
 
     /**
      *
@@ -55,7 +56,7 @@ public interface UserService {
      * @param email 邮箱
      * @return 验证码
      */
-    String emailValidation(String email);
+    Map<String,String> emailValidation(String email);
 
     /**
      *
