@@ -47,12 +47,32 @@ export const UpdateBloodService = (BloodData) => {
     return request.post('/record/blood/update', BloodData);
 }
 
-// 获取用户血液分析数据
+// 新增用户温度测量
+export const addTemperatureService = (TemperatureData) => {
+    return request.post('/record/temperature', TemperatureData);
+}
+
+// 获取用户温度测量数据
 export const getTemperatureService = () => {
     return request.get('/record/temperature/get');
+}
+
+// 更新用户体温测量数据
+export const UpdateTemperatureService = (TemperatureData) => {
+    return request.post('/record/temperature/update', TemperatureData);
+}
+
+// 新增用户尿液分析
+export const addUrineService = (UrineData) => {
+    return request.post('/record/urine', UrineData);
 }
 
 // 获取用户尿液分析数据
 export const getUrineService = () => {
     return request.get('/record/urine/get');
+}
+
+// 更新用户体温测量数据
+export const UpdateUrineService = (UrineData) => {
+    return request.post('/record/urine/update', UrineData);
 }

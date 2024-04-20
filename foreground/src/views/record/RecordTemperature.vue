@@ -15,15 +15,17 @@
                     <el-form-item label="年龄">
                         <el-input v-model="temperature.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="高压">
+                    <el-form-item label="体温(摄氏度)">
                         <el-input v-model="temperature.temperature"></el-input>
                     </el-form-item>
                     <el-form-item label="分析和建议">
                         <el-input v-model="temperature.result" type="textarea" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="physicalUpdate">提交修改</el-button>
-                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 145px;">咨询</el-button>
+                        <el-button type="primary" @click="temperatureAdd()">新增</el-button>
+                        <el-button type="primary" @click="temperatureUpdate()"
+                            style="margin-left: 35px;">提交修改</el-button>
+                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 40px;">咨询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -39,7 +41,34 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
-import { getTemperatureService } from '@/api/record.js';
+import { addTemperatureService, getTemperatureService, UpdateTemperatureService } from '@/api/record.js';
+
+var flag = 1; // 为0表示数据库中没有该用户这个项目的体检数据,可以新增
+const temperatureAdd = async () => {
+    console.log(flag)
+    if (flag == 1) {
+        ElMessage.error("已有体温测量记录,请点击提交修改");
+        return;
+    }
+    let result = await addTemperatureService(temperature.value);
+    if (result.code == 0) {
+        ElMessage.success('新增成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
+const temperatureUpdate = async () => {
+    if (flag == 0) {
+        ElMessage.error("未有体温测量记录,请点击新增");
+        return;
+    }
+    let result = await UpdateTemperatureService(temperature.value);
+    if (result.code == 0) {
+        ElMessage.success('修改成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
 
 // 保存血压测量数据
 const temperature = ref({});
@@ -65,6 +94,12 @@ const echartsContainer = ref(null);
 // 初始化图表
 const initECharts = () => {
     if (!temperature.value) {
+        flag = 0;
+        temperature.value = {
+            gender: "",
+            age: "",
+            temperature: ""
+        }
         return; // 如果身体测量数据还未加载完成，则不进行初始化操作
     }
 
@@ -74,7 +109,7 @@ const initECharts = () => {
     // 指定图表的配置项和数据
     const option = {
         title: {
-            text: '血压测量'
+            text: '体温测量'
         },
         tooltip: {
             trigger: 'axis',

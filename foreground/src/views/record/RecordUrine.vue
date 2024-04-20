@@ -2,7 +2,7 @@
     <el-card class="page-container">
         <template #header>
             <div class="header">
-                <span>血液分析</span>
+                <span>尿液分析</span>
             </div>
         </template>
         <el-row>
@@ -31,8 +31,10 @@
                         <el-input v-model="urine.result" type="textarea" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="physicalUpdate">提交修改</el-button>
-                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 126px;">咨询</el-button>
+                        <el-button type="primary" @click="urineAdd()">新增</el-button>
+                        <el-button type="primary" @click="urineUpdate()"
+                            style="margin-left: 28px;">提交修改</el-button>
+                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 26px;">咨询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -48,7 +50,35 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
-import { getUrineService } from '@/api/record.js';
+import { addUrineService, getUrineService, UpdateUrineService  } from '@/api/record.js';
+
+var flag = 1; // 为0表示数据库中没有该用户这个项目的体检数据,可以新增
+const urineAdd = async () => {
+    console.log(flag)
+    if (flag == 1) {
+        ElMessage.error("已有体温测量记录,请点击提交修改");
+        return;
+    }
+    let result = await addUrineService(urine.value);
+    if (result.code == 0) {
+        ElMessage.success('新增成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
+const urineUpdate = async () => {
+    if (flag == 0) {
+        ElMessage.error("未有体温测量记录,请点击新增");
+        return;
+    }
+    let result = await UpdateUrineService(urine.value);
+    if (result.code == 0) {
+        ElMessage.success('修改成功');
+    } else {
+        ElMessage.error(result);
+    }
+}
+
 
 // 创建响应式引用来保存体格测量数据
 const urine = ref({});
@@ -76,6 +106,15 @@ const echartsContainer = ref(null);
 // 初始化图表
 const initECharts = () => {
     if (!urine.value) {
+        flag = 0;
+        urine.value = {
+            gender: "",
+            age: "",
+            sg: "",
+            ph:"",
+            protein:"",
+            le:""
+        }
         return; // 如果身体测量数据还未加载完成，则不进行初始化操作
     }
 
@@ -85,7 +124,7 @@ const initECharts = () => {
     // 指定图表的配置项和数据
     const option = {
         title: {
-            text: '血液分析'
+            text: '尿液分析'
         },
         tooltip: {
             trigger: 'axis',

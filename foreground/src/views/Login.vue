@@ -46,6 +46,7 @@ const RegisterData = ref({
     password: "",
     rePassword: "",
     email: "",
+    reEmail:"",
     code: "",
     reCode: ""
 })
@@ -93,9 +94,11 @@ const RegisterRules = {
 }
 // 发送验证码
 const sendCode = async (email) => {
-    // 发送给用户的验证码，前端也接收
-    let reCode = await sendValidation(email);
-    RegisterData.value.reCode = reCode;
+    // 发送给用户的验证码，前端也接收。
+    // 还有发送这个验证码时用的邮箱，防止用户后面修改邮箱
+    let result = await sendValidation(email);
+    RegisterData.value.reCode = result.code;
+    RegisterData.reEmail = result.reEmail;
 }
 // 注册函数
 const register = async () => {
