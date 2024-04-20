@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * @author TZH
  */
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
