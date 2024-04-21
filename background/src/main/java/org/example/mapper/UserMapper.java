@@ -27,7 +27,7 @@ public interface UserMapper {
      * @param password 密码
      * @param email 邮箱
      */
-    @Insert("insert into tb_user(username,password,email,create_time) values(#{username},#{password},#{email},now())" )
+    @Insert("insert into tb_user(username,password,email,create_time) values(#{username},#{password},#{email},NOW())" )
     void add(
             String username,
             String password,

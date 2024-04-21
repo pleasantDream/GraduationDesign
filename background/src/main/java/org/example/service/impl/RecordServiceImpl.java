@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 
@@ -37,12 +38,12 @@ public class RecordServiceImpl implements RecordService {
     public Physical physicalUtil(Physical physical) throws JSONException, IOException {
         // 多次字符串拼接场景下StringBuilder比String更快
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:\n性别:");
-        sb.append(physical.getGender()).append("\n年龄:").append(physical.getAge());
-        sb.append("\n身高: ").append(physical.getHeight()).append("米,");
-        sb.append("\n体重: ").append(physical.getWeight()).append("千克,");
+        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:性别:");
+        sb.append(physical.getGender()).append("年龄:").append(physical.getAge());
+        sb.append("身高: ").append(physical.getHeight()).append("米,");
+        sb.append("体重: ").append(physical.getWeight()).append("千克,");
         float bmi = physical.getWeight()/(physical.getHeight()*physical.getHeight());
-        sb.append("\nBMI指数: ").append(bmi).append("\n");
+        sb.append("BMI指数: ").append(bmi);
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -68,12 +69,12 @@ public class RecordServiceImpl implements RecordService {
 
     public Blood BloodUtil(Blood blood) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了血液分析的体检项目,结果为:\n性别:");
+        sb.append("你是一个专业医生，现在我完成了血液分析的体检项目,结果为:性别:");
         sb.append(blood.getGender()).append("\n年龄:").append(blood.getAge());
-        sb.append("\n血红蛋白: ").append(blood.getHb()).append("g/l,");
-        sb.append("\n血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
-        sb.append("\n血小板计数: ").append(blood.getPlt()).append("*10^9/l,");
-        sb.append("\n血糖: ").append(blood.getGlucose()).append("mg/dl\n");
+        sb.append("血红蛋白: ").append(blood.getHb()).append("g/l,");
+        sb.append("血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
+        sb.append("血小板计数: ").append(blood.getPlt()).append("*10^9/l,");
+        sb.append("血糖: ").append(blood.getGlucose()).append("mg/dl");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -99,10 +100,10 @@ public class RecordServiceImpl implements RecordService {
 
     public Pressure pressureUtil(Pressure pressure) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了血压测量的体检项目,结果为:\n性别:");
+        sb.append("你是一个专业医生，现在我完成了血压测量的体检项目,结果为:性别:");
         sb.append(pressure.getGender()).append("\n年龄:").append(pressure.getAge());
-        sb.append("\n高压: ").append(pressure.getHighPressure()).append("mmHg,");
-        sb.append("\n低压: ").append(pressure.getLowPressure()).append("mmHg\n");
+        sb.append("高压: ").append(pressure.getHighPressure()).append("mmHg,");
+        sb.append("低压: ").append(pressure.getLowPressure()).append("mmHg");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -126,11 +127,11 @@ public class RecordServiceImpl implements RecordService {
         return Result.success();
     }
 
-    public Temperature temperatureUtil(Temperature temperature) throws JSONException, IOException {
+    public Map<String, Object> temperatureUtil(Temperature temperature) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体温测量的体检项目,结果为:\n性别:");
-        sb.append(temperature.getGender()).append("\n年龄:").append(temperature.getAge());
-        sb.append("\n体温: ").append(temperature.getTemperature()).append("摄氏度\n");
+        sb.append("你是一个专业医生，现在我完成了体温测量的体检项目,结果为:性别:");
+        sb.append(temperature.getGender()).append("年龄:").append(temperature.getAge());
+        sb.append("体温: ").append(temperature.getTemperature()).append("摄氏度");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -138,30 +139,36 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(result);
         // 往Physical类的一个实例中添加分析结果
         temperature.setResult(result);
+        Map<String, Object> map = new HashMap<>();
+        map.put("temperature", temperature);
+        map.put("userMessage",content);
 
-        return temperature;
+        return map;
     }
 
     @Override
     public Result recordTemperature(Temperature temperature) throws JSONException, IOException {
-        Temperature temperature1 = temperatureUtil(temperature);
+        Map<String, Object> temperatureMap = temperatureUtil(temperature);
+        Temperature temperature1 = (Temperature)temperatureMap.get("temperature");
+        String userMessage = (String) temperatureMap.get("userMessage");
 
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
         temperature1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addTemperature(temperature1);
+        recordMapper.addHsitory(userId, userMessage, temperature1.getResult());
         return Result.success();
     }
 
     public Urine UrineUtil(Urine urine) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了尿液分析的体检项目,结果为:\n性别:");
-        sb.append(urine.getGender()).append("\n年龄:").append(urine.getAge());
-        sb.append("\n尿液比重: ").append(urine.getSg()).append(",");
-        sb.append("\n尿液PH值: ").append(urine.getPh()).append(",");
-        sb.append("\n蛋白质: ").append(urine.getProtein()).append("mg/dl,");
-        sb.append("\n白细胞酯酶: ").append(urine.getLe()).append("U/l\n");
+        sb.append("你是一个专业医生，现在我完成了尿液分析的体检项目,结果为:性别:");
+        sb.append(urine.getGender()).append("年龄:").append(urine.getAge());
+        sb.append("尿液比重: ").append(urine.getSg()).append(",");
+        sb.append("尿液PH值: ").append(urine.getPh()).append(",");
+        sb.append("蛋白质: ").append(urine.getProtein()).append("mg/dl,");
+        sb.append("白细胞酯酶: ").append(urine.getLe()).append("U/l");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
         // 得到分析建议结果
@@ -274,8 +281,9 @@ public class RecordServiceImpl implements RecordService {
     public Result recordTemperatureUpdate(Temperature temperature) throws JSONException, IOException {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+        Map<String, Object> temperatureMap = temperatureUtil(temperature);
 
-        Temperature temperature1 = temperatureUtil(temperature);
+        Temperature temperature1 = (Temperature)temperatureMap.get("temperature");
         temperature1.setUserId(userId);
         recordMapper.temperatureUpdate(temperature1);
         return Result.success();
@@ -292,24 +300,34 @@ public class RecordServiceImpl implements RecordService {
         return Result.success();
     }
 
+    @Override
+    public void test(String message) throws JSONException, IOException {
+        String result =  wenXinYiYan(message);
+        System.out.println(result);
+    }
+
+    @Override
+    public List<History> recordTemperatureHistory() {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        List<History> histories = recordMapper.getHistory(userId);
+        return histories;
+    }
+
 
     public String wenXinYiYan(String content) throws IOException, JSONException {
-        System.out.println("User:"+content);
         String accessToken = getAccessToken();
         MediaType mediaType = MediaType.parse("application/json");
-        // 原始json字符串
-        String jsonStr = "{\"messages\":[{\"role\":\"user\",\"content\":\"\"}]}";
-        // 将 JSON 字符串解析为 JSONObject
-        JSONObject json = new JSONObject(jsonStr);
-        // 更新 content 字段的值
-        JSONArray messagesArray = json.getJSONArray("messages");
-        JSONObject messageObj = messagesArray.getJSONObject(0);
-        messageObj.put("content", content);
-        // 获取更新后的 JSON 字符串
-        String updatedJsonStr = json.toString();
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+        sb.append(content);
+        sb.append("\"}]}");
+        String payload = sb.toString();
+        System.out.println(payload);
 
-        RequestBody body = RequestBody.create(mediaType, updatedJsonStr);
+        RequestBody body = RequestBody.create(mediaType, payload);
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/eb-instant?access_token="+accessToken)
                 .method("POST", body)

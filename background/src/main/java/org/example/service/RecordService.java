@@ -7,6 +7,7 @@ import org.hibernate.validator.internal.util.StringHelper;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -79,4 +80,8 @@ public interface RecordService {
     Result recordTemperatureUpdate(Temperature temperature) throws JSONException, IOException;
 
     Result recordUrineUpdate(Urine urine) throws JSONException, IOException;
+
+    void test(String message) throws JSONException, IOException;
+
+    List<History> recordTemperatureHistory();
 }

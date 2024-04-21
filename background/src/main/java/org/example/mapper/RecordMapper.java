@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.example.pojo.*;
 
+import java.util.List;
+
 
 /**
  * @author TZH
@@ -18,7 +20,7 @@ public interface RecordMapper {
      * @param physical 体格类实例
      */
     @Insert("insert into tb_physical (gender,age,userId,time,height,weight,bmi,result) values(#{gender}," +
-            "#{age},#{userId},now(),#{height},#{weight},#{bmi},#{result})")
+            "#{age},#{userId},NOW(),#{height},#{weight},#{bmi},#{result})")
     void addPhysical(Physical physical);
 
     /**
@@ -26,7 +28,7 @@ public interface RecordMapper {
      * @param blood 血液类实例
      */
     @Insert("insert into tb_blood (gender,age,userId,time,hb,wbc,plt,glucose,result) values(#{gender}," +
-            "#{age},#{userId},now(),#{hb},#{wbc},#{plt},#{glucose},#{result})")
+            "#{age},#{userId},NOW(),#{hb},#{wbc},#{plt},#{glucose},#{result})")
     void addBlood(Blood blood);
 
     /**
@@ -34,7 +36,7 @@ public interface RecordMapper {
      * @param pressure 血压类实例
      */
     @Insert("insert into tb_pressure (gender,age,userId,time,highPressure,lowPressure,result) values(#{gender}," +
-            "#{age},#{userId},now(),#{highPressure},#{lowPressure},#{result})")
+            "#{age},#{userId},NOW(),#{highPressure},#{lowPressure},#{result})")
     void addPressure(Pressure pressure);
 
     /**
@@ -42,7 +44,7 @@ public interface RecordMapper {
      * @param temperature 温度类实例
      */
     @Insert("insert into tb_temperature (gender,age,userId,time,temperature,result) values(#{gender}," +
-            "#{age},#{userId},now(),#{temperature},#{result})")
+            "#{age},#{userId},NOW(),#{temperature},#{result})")
     void addTemperature(Temperature temperature);
 
     /**
@@ -50,7 +52,7 @@ public interface RecordMapper {
      * @param urine 尿液类实例
      */
     @Insert("insert into tb_urine (gender,age,userId,time,sg,ph,protein,le,result) values(#{gender}," +
-            "#{age},#{userId},now(),#{sg},#{ph},#{protein},#{le},#{result})")
+            "#{age},#{userId},NOW(),#{sg},#{ph},#{protein},#{le},#{result})")
     void addUrine(Urine urine);
 
 
@@ -69,24 +71,31 @@ public interface RecordMapper {
     @Select("select * from tb_urine where userid = #{userId}")
     Urine getUrine(Integer userId);
 
-    @Update("update tb_physical set gender=#{gender}, age=#{age}, time=now(), height=#{height}, " +
+    @Update("update tb_physical set gender=#{gender}, age=#{age}, time=NOW(), height=#{height}, " +
             "weight=#{weight}, bmi=#{bmi}, result=#{result} where userid=#{userId}")
     void physicalUpdate(Physical physical);
 
 
-    @Update("update tb_blood set gender=#{gender}, age=#{age}, time=now(), hb=#{hb}, wbc=#{wbc}, " +
+    @Update("update tb_blood set gender=#{gender}, age=#{age}, time=NOW(), hb=#{hb}, wbc=#{wbc}, " +
             "plt=#{plt}, glucose=#{glucose}, result=#{result} where userid=#{userId}")
     void bloodUpdate(Blood blood);
 
-    @Update("update tb_pressure set gender=#{gender}, age=#{age}, time=now(), highpressure=#{highPressure}," +
+    @Update("update tb_pressure set gender=#{gender}, age=#{age}, time=NOW(), highpressure=#{highPressure}," +
             "lowpressure=#{lowPressure}, result=#{result} where userid=#{userId}")
     void pressureUpdate(Pressure pressure1);
 
-    @Update("update tb_temperature set gender=#{gender}, age=#{age}, time=now(), temperature=#{temperature}," +
+    @Update("update tb_temperature set gender=#{gender}, age=#{age}, time=NOW(), temperature=#{temperature}," +
             "result=#{result} where userid=#{userId}")
     void temperatureUpdate(Temperature temperature1);
 
-    @Update("update tb_urine set gender=#{gender}, age=#{age}, time=now(), sg=#{sg}," +
+    @Update("update tb_urine set gender=#{gender}, age=#{age}, time=NOW(), sg=#{sg}," +
             "ph=#{ph}, protein=#{protein}, le=#{le}, result=#{result} where userid=#{userId}")
     void urineUpdate(Urine urine1);
+
+    @Insert("insert into tb_history (user_id,create_time,question,answer) values(#{userId},NOW()," +
+            "#{userMessage},#{result})")
+    void addHsitory(Integer userId,String userMessage, String result);
+
+    @Select("select * from tb_history where user_id=#{userId} order by create_time desc limit 0,10")
+    List<History> getHistory(Integer userId);
 }

@@ -1,6 +1,8 @@
 package org.example.controller;
 
+import ch.qos.logback.classic.joran.serializedModel.HardenedModelInputStream;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.ibatis.annotations.Param;
 import org.example.pojo.*;
 import org.example.service.RecordService;
 
@@ -8,7 +10,9 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.Message;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -105,6 +109,15 @@ public class RecordController {
         return result;
     }
 
+    @PostMapping("/temperature/history")
+    public List<History> recordTemperatureHistory(){
+        System.out.println("体温咨询历史");
+        List<History> histories = recordService.recordTemperatureHistory();
+
+        return histories;
+    }
+
+
     @PostMapping("/urine")
     public Result recordUrine(@RequestBody Urine urine) throws JSONException, IOException {
         Result result = recordService.recordUrine(urine);
@@ -122,5 +135,10 @@ public class RecordController {
         System.out.println("更新尿液测分析数据");
         Result result = recordService.recordUrineUpdate(Urine);
         return result;
+    }
+    @PostMapping("/test")
+    public void test(@RequestParam("message") String message) throws JSONException, IOException {
+        System.out.println("测试");
+        recordService.test(message);
     }
 }
