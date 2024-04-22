@@ -83,5 +83,9 @@ public interface RecordService {
 
     void test(String message) throws JSONException, IOException;
 
-    List<History> recordTemperatureHistory();
+    List<History> recordHistory(Integer startRow, String item);
+
+    String recordChat(String question, String item) throws JSONException, IOException;
+
+
 }

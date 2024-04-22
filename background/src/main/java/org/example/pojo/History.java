@@ -14,4 +14,5 @@ public class History {
     private Date createTime;
     private String question;
     private String answer;
+    private String item;
 }

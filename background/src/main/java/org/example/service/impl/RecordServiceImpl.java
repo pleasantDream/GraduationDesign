@@ -3,6 +3,7 @@ package org.example.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
+import org.assertj.core.error.ShouldHaveSizeGreaterThanOrEqualTo;
 import org.example.enums.ChatGptConstant;
 import org.example.mapper.RecordMapper;
 import org.example.pojo.*;
@@ -11,6 +12,7 @@ import org.example.utils.ThreadLocalUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
@@ -35,7 +38,7 @@ public class RecordServiceImpl implements RecordService {
     @Autowired
     private RecordMapper recordMapper;
 
-    public Physical physicalUtil(Physical physical) throws JSONException, IOException {
+    public Map<String, Object> physicalUtil(Physical physical) throws JSONException, IOException {
         // 多次字符串拼接场景下StringBuilder比String更快
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:性别:");
@@ -46,84 +49,124 @@ public class RecordServiceImpl implements RecordService {
         sb.append("BMI指数: ").append(bmi);
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
+
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+        sb2.append(content);
+        sb2.append("\"}]}");
+        String payload = sb2.toString();
+
         // 得到分析建议结果
-        String result = wenXinYiYan(content);
-        System.out.println(result);
+        String result = wenXinYiYan(payload);
+        String result2 = result.replace("\n", "");
+        System.out.println(result2);
         // 往Physical类的一个实例中添加结果
-        physical.setResult(result);
+        physical.setResult(result2);
         physical.setBmi(bmi);
-        return physical;
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("physical",physical);
+        map.put("question",content);
+        return map;
     }
 
     @Override
     public Result recordPhysical(Physical physical) throws JSONException, IOException {
-        Physical physical1 = physicalUtil(physical);
-
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+
+        Map<String, Object> map2 = physicalUtil(physical);
+        Physical physical1 = (Physical) map2.get("physical");
+        String question = (String)map2.get("question");
         physical1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addPhysical(physical1);
+        recordMapper.addHsitory(userId, question, physical1.getResult(), "体格测量");
         return Result.success();
     }
 
-    public Blood BloodUtil(Blood blood) throws JSONException, IOException {
+    public Map<String, Object> BloodUtil(Blood blood) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了血液分析的体检项目,结果为:性别:");
-        sb.append(blood.getGender()).append("\n年龄:").append(blood.getAge());
+        sb.append(blood.getGender()).append("年龄:").append(blood.getAge());
         sb.append("血红蛋白: ").append(blood.getHb()).append("g/l,");
         sb.append("血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
         sb.append("血小板计数: ").append(blood.getPlt()).append("*10^9/l,");
         sb.append("血糖: ").append(blood.getGlucose()).append("mg/dl");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
-        // 得到分析建议结果
-        String result = wenXinYiYan(content);
-        System.out.println(result);
-        // 往Blood类的一个实例中添加分析结果
-        blood.setResult(result);
 
-        return blood;
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+        sb2.append(content);
+        sb2.append("\"}]}");
+        String payload = sb2.toString();
+        // 得到分析建议结果,并将换行符替换掉
+        String result = wenXinYiYan(payload);
+        String result2 = result.replace("\n","");
+
+        // 往Blood类的一个实例中添加分析结果
+        blood.setResult(result2);
+        Map<String, Object> map = new HashMap<String,Object>();
+        map.put("blood",blood);
+        map.put("question", content);
+
+        return map;
     }
 
     @Override
     public Result recordBlood(Blood blood) throws JSONException, IOException {
-        Blood blood1 = BloodUtil(blood);
-
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+
+        Map<String, Object> map2 = BloodUtil(blood);
+        Blood blood1 = (Blood) map2.get("blood");
+        String question = (String)map2.get("question");
         blood1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addBlood(blood1);
+        recordMapper.addHsitory(userId, question, blood1.getResult(), "血液分析");
         return Result.success();
     }
 
-    public Pressure pressureUtil(Pressure pressure) throws JSONException, IOException {
+    public Map<String, Object> pressureUtil(Pressure pressure) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了血压测量的体检项目,结果为:性别:");
-        sb.append(pressure.getGender()).append("\n年龄:").append(pressure.getAge());
+        sb.append(pressure.getGender()).append("年龄:").append(pressure.getAge());
         sb.append("高压: ").append(pressure.getHighPressure()).append("mmHg,");
         sb.append("低压: ").append(pressure.getLowPressure()).append("mmHg");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
-        // 得到分析建议结果
-        String result = wenXinYiYan(content);
-        System.out.println(result);
-        // 往Physical类的一个实例中添加分析结果
-        pressure.setResult(result);
 
-        return pressure;
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+        sb2.append(content);
+        sb2.append("\"}]}");
+        String payload = sb2.toString();
+        // 得到分析建议结果
+        String result = wenXinYiYan(payload);
+        String result2 = result.replace("\n", "");
+        // 往Physical类的一个实例中添加分析结果
+        pressure.setResult(result2);
+        Map<String,Object> map = new HashMap<>();
+        map.put("pressure", pressure);
+        map.put("question", content);
+
+        return map;
     }
 
     @Override
     public Result recordPressure(Pressure pressure) throws JSONException, IOException {
-        Pressure pressure1 = pressureUtil(pressure);
-
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+
+        Map<String, Object> map2 = pressureUtil(pressure);
+        Pressure pressure1 = (Pressure) map2.get("pressure");
+        String question = (String) map2.get("question");
         pressure1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addPressure(pressure1);
+        recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压测量");
         return Result.success();
     }
 
@@ -134,14 +177,22 @@ public class RecordServiceImpl implements RecordService {
         sb.append("体温: ").append(temperature.getTemperature()).append("摄氏度");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
-        // 得到分析建议结果
-        String result = wenXinYiYan(content);
-        System.out.println(result);
+
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+        sb2.append(content);
+        sb2.append("\"}]}");
+        String payload = sb2.toString();
+
+        // 得到分析建议结果,并将换行符替换掉
+        String result = wenXinYiYan(payload);
+        String result2 = result.replace("\n", "");
+
         // 往Physical类的一个实例中添加分析结果
-        temperature.setResult(result);
-        Map<String, Object> map = new HashMap<>();
+        temperature.setResult(result2);
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put("temperature", temperature);
-        map.put("userMessage",content);
+        map.put("question",content);
 
         return map;
     }
@@ -150,18 +201,18 @@ public class RecordServiceImpl implements RecordService {
     public Result recordTemperature(Temperature temperature) throws JSONException, IOException {
         Map<String, Object> temperatureMap = temperatureUtil(temperature);
         Temperature temperature1 = (Temperature)temperatureMap.get("temperature");
-        String userMessage = (String) temperatureMap.get("userMessage");
+        String question = (String) temperatureMap.get("question");
 
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
         temperature1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addTemperature(temperature1);
-        recordMapper.addHsitory(userId, userMessage, temperature1.getResult());
+        recordMapper.addHsitory(userId, question, temperature1.getResult(), "体温测量");
         return Result.success();
     }
 
-    public Urine UrineUtil(Urine urine) throws JSONException, IOException {
+    public Map<String, Object> UrineUtil(Urine urine) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("你是一个专业医生，现在我完成了尿液分析的体检项目,结果为:性别:");
         sb.append(urine.getGender()).append("年龄:").append(urine.getAge());
@@ -171,24 +222,36 @@ public class RecordServiceImpl implements RecordService {
         sb.append("白细胞酯酶: ").append(urine.getLe()).append("U/l");
         sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
         String content = sb.toString();
-        // 得到分析建议结果
-        String result = wenXinYiYan(content);
-        System.out.println(result);
-        // 往Physical类的一个实例中添加分析结果
-        urine.setResult(result);
 
-        return urine;
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
+        sb2.append(content);
+        sb2.append("\"}]}");
+        String payload = sb2.toString();
+        // 得到分析建议结果
+        String result = wenXinYiYan(payload);
+        String result2 = result.replace("\n", "");
+        // 往Physical类的一个实例中添加分析结果
+        urine.setResult(result2);
+        Map<String,Object> map = new HashMap<>();
+        map.put("urine",urine);
+        map.put("question",content);
+
+        return map;
     }
 
     @Override
     public Result recordUrine(Urine urine) throws JSONException, IOException {
-        Urine urine1 = UrineUtil(urine);
-
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+
+        Map<String ,Object> map2 = UrineUtil(urine);
+        Urine urine1 = (Urine) map2.get("urine");
+        String question = (String) map2.get("question");
         urine1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addUrine(urine1);
+        recordMapper.addHsitory(userId, question, urine1.getResult(), "尿液分析");
         return Result.success();
     }
 
@@ -247,11 +310,15 @@ public class RecordServiceImpl implements RecordService {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
 
-        Physical physical1 = physicalUtil(physical);
+        Map<String, Object> map2 = physicalUtil(physical);
+        Physical physical1 = (Physical) map2.get("physical");
+        String question = (String) map2.get("question");
         physical1.setUserId(userId);
-        recordMapper.physicalUpdate(physical1);
 
-        System.out.println(Result.success());
+        recordMapper.physicalUpdate(physical1);
+        recordMapper.deleteHistory(userId, "体格测量");
+        recordMapper.addHsitory(userId, question, physical1.getResult(), "体格测量");
+
         return Result.success();
     }
 
@@ -260,9 +327,14 @@ public class RecordServiceImpl implements RecordService {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
 
-        Blood blood1 = BloodUtil(blood);
+        Map<String, Object> map2 = BloodUtil(blood);
+        Blood blood1 = (Blood)map2.get("blood");
+        String question = (String)map2.get("question");
         blood1.setUserId(userId);
+
         recordMapper.bloodUpdate(blood1);
+        recordMapper.deleteHistory(userId,"血液分析");
+        recordMapper.addHsitory(userId, question, blood1.getResult(),"血液分析");
         return Result.success();
     }
 
@@ -271,9 +343,13 @@ public class RecordServiceImpl implements RecordService {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
 
-        Pressure pressure1 = pressureUtil(pressure);
+        Map<String,Object> map2 = pressureUtil(pressure);
+        Pressure pressure1 = (Pressure) map2.get("pressure");
+        String question = (String) map2.get("question");
         pressure1.setUserId(userId);
         recordMapper.pressureUpdate(pressure1);
+        recordMapper.deleteHistory(userId,"血压测量");
+        recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压测量");
         return Result.success();
     }
 
@@ -285,7 +361,12 @@ public class RecordServiceImpl implements RecordService {
 
         Temperature temperature1 = (Temperature)temperatureMap.get("temperature");
         temperature1.setUserId(userId);
+        String question = (String) temperatureMap.get("question");
+
         recordMapper.temperatureUpdate(temperature1);
+        recordMapper.deleteHistory(userId, "体温测量");
+        recordMapper.addHsitory(userId, question, temperature1.getResult(),"体温测量");
+
         return Result.success();
     }
 
@@ -294,39 +375,65 @@ public class RecordServiceImpl implements RecordService {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
 
-        Urine urine1 = UrineUtil(urine);
+        Map<String,Object> map2 = UrineUtil(urine);
+        Urine urine1 = (Urine) map2.get("urine");
+        String question = (String) map2.get("question");
         urine1.setUserId(userId);
+
         recordMapper.urineUpdate(urine1);
+        recordMapper.deleteHistory(userId, "尿液分析");
+        recordMapper.addHsitory(userId, question, urine1.getResult(), "尿液分析");
         return Result.success();
     }
 
     @Override
     public void test(String message) throws JSONException, IOException {
-        String result =  wenXinYiYan(message);
+        String sb="{\"messages\":[{\"role\": \"user\",\"content\":\"你是一个专业医生，现在我完成了体温测量的体检项目,结果为:性别:男年龄:21体温: 38.5摄氏度请你分析我的体检结果,并给出对应的的建议。50-100字\"},{\"role\":\"assistant\",\"content\":\"根据您的体温测量结果，您可能处于轻度发热状态。这种情况可能与多种因素有关，如感染、炎症、环境温度等。为了进一步评估您的健康状况，建议您咨询医生进行进一步的检查和评估."+
+                "如果您感到不适，或者认为您的健康状况有进一步恶化，建议您尽快就医并告诉医生您的症状和病史。在接受治疗之前，请务必确保您提供给医生准确的健康信息。同时，如果您觉得您可能需要额外的照顾或者咨询，请不要犹豫寻求帮助。" +
+                "此外，建议您保持良好的生活习惯，如保持充足的睡眠、多喝水、避免过度劳累和压力等。这些措施有助于提高您的免疫力，促进身体的恢复。同时，请注意观察自己的身体状况，如有异常症状或体征，请及时就医。\"},{\"role\": \"user\",\"content\":\"我该怎么降温呢\"},{\"role\":\"assistant\",\"content\":\"您可以洗个热水澡,吃感冒药\"},{\"role\":\"user\",\"content\":\"体温多少为正常范围\"}]}    ";
+        String result =  wenXinYiYan(sb);
         System.out.println(result);
     }
 
     @Override
-    public List<History> recordTemperatureHistory() {
+    public List<History> recordHistory(Integer startRow, String item) {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
+        List<History> histories = recordMapper.getHistory(userId,item, startRow);
 
-        List<History> histories = recordMapper.getHistory(userId);
         return histories;
     }
 
-
-    public String wenXinYiYan(String content) throws IOException, JSONException {
-        String accessToken = getAccessToken();
-        MediaType mediaType = MediaType.parse("application/json");
-
+    @Override
+    public String recordChat(String question, String item) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        // 咨询的话只查找最近的五条对话记录
+        List<History> histories = recordMapper.getHistory(userId,item, 0);
         StringBuilder sb = new StringBuilder();
-        sb.append("{\"messages\":[{\"role\":\"user\",\"content\":\"");
-        sb.append(content);
-        sb.append("\"}]}");
+        sb.append("{\"messages\":[");
+        for (int i = histories.size() - 1; i >= 0; i--) {
+            History history = histories.get(i);
+            sb.append("{\"role\": \"user\",\"content\":\"").append(history.getQuestion());
+            sb.append("\"},{\"role\":\"assistant\",\"content\":\"");
+            sb.append(history.getAnswer()).append("\"},");
+        }
+        sb.append("{\"role\":\"user\",\"content\":\"").append(question).append("\"}]}");
         String payload = sb.toString();
         System.out.println(payload);
+        String answer = wenXinYiYan(payload);
+        String answer2 = answer.replace("\n","");
+        System.out.println(answer2);
 
+        recordMapper.addHsitory(userId, question, answer2, item);
+
+        return answer;
+    }
+
+
+    public String wenXinYiYan(String payload) throws IOException, JSONException {
+        String accessToken = getAccessToken();
+        MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, payload);
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/eb-instant?access_token="+accessToken)

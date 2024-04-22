@@ -26,6 +26,25 @@ public class RecordController {
     private RecordService recordService;
 
 
+    @PostMapping("/history")
+    public List<History> recordHistory(@RequestParam("startRow") Integer startRow,
+                                       @RequestParam("item") String item){
+        System.out.println("获取咨询历史");
+        List<History> histories = recordService.recordHistory(startRow, item);
+
+        return histories;
+    }
+    @GetMapping("/chat")
+    public String recordChat(@RequestParam("question") String question,
+                             @RequestParam("item") String item) throws JSONException, IOException {
+        System.out.println("体检咨询聊天");
+        String answer = recordService.recordChat(question, item);
+
+        return answer;
+    }
+
+
+
     @PostMapping("/physical")
     public Result recordPhysical(@RequestBody Physical physical) throws JSONException, IOException {
         System.out.println("新增体格测量数据");
@@ -70,7 +89,6 @@ public class RecordController {
         return result;
     }
 
-
     @PostMapping("/pressure")
     public Result recordPressure(@RequestBody Pressure pressure) throws JSONException, IOException {
         Result result = recordService.recordPressure(pressure);
@@ -107,14 +125,6 @@ public class RecordController {
         System.out.println("更新体温测量数据");
         Result result = recordService.recordTemperatureUpdate(temperature);
         return result;
-    }
-
-    @PostMapping("/temperature/history")
-    public List<History> recordTemperatureHistory(){
-        System.out.println("体温咨询历史");
-        List<History> histories = recordService.recordTemperatureHistory();
-
-        return histories;
     }
 
 

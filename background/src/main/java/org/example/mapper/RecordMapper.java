@@ -1,9 +1,6 @@
 package org.example.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.example.pojo.*;
 
 import java.util.List;
@@ -92,10 +89,14 @@ public interface RecordMapper {
             "ph=#{ph}, protein=#{protein}, le=#{le}, result=#{result} where userid=#{userId}")
     void urineUpdate(Urine urine1);
 
-    @Insert("insert into tb_history (user_id,create_time,question,answer) values(#{userId},NOW()," +
-            "#{userMessage},#{result})")
-    void addHsitory(Integer userId,String userMessage, String result);
+    @Insert("insert into tb_history (user_id,create_time,question,answer,item) values(#{userId},NOW()," +
+            "#{question},#{answer},#{item})")
+    void addHsitory(Integer userId,String question, String answer, String item);
 
-    @Select("select * from tb_history where user_id=#{userId} order by create_time desc limit 0,10")
-    List<History> getHistory(Integer userId);
+    @Select("select * from tb_history where user_id=#{userId} and item=#{item}" +
+            "order by create_time desc limit #{startRow},5")
+    List<History> getHistory(Integer userId,String item,Integer startRow);
+
+    @Delete("delete from tb_history where user_id=#{userId} and item=#{item}")
+    void deleteHistory(Integer userId, String item);
 }
