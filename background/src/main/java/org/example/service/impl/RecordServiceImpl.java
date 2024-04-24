@@ -81,7 +81,7 @@ public class RecordServiceImpl implements RecordService {
         physical1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addPhysical(physical1);
-        recordMapper.addHsitory(userId, question, physical1.getResult(), "体格测量");
+        recordMapper.addHsitory(userId, question, physical1.getResult(), "体格分析");
         return Result.success();
     }
 
@@ -166,7 +166,7 @@ public class RecordServiceImpl implements RecordService {
         pressure1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addPressure(pressure1);
-        recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压测量");
+        recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压分析");
         return Result.success();
     }
 
@@ -208,7 +208,7 @@ public class RecordServiceImpl implements RecordService {
         temperature1.setUserId(userId);
         // 往表中插入数据
         recordMapper.addTemperature(temperature1);
-        recordMapper.addHsitory(userId, question, temperature1.getResult(), "体温测量");
+        recordMapper.addHsitory(userId, question, temperature1.getResult(), "体温分析");
         return Result.success();
     }
 
@@ -316,8 +316,8 @@ public class RecordServiceImpl implements RecordService {
         physical1.setUserId(userId);
 
         recordMapper.physicalUpdate(physical1);
-        recordMapper.deleteHistory(userId, "体格测量");
-        recordMapper.addHsitory(userId, question, physical1.getResult(), "体格测量");
+        recordMapper.deleteHistory(userId, "体格分析");
+        recordMapper.addHsitory(userId, question, physical1.getResult(), "体格分析");
 
         return Result.success();
     }
@@ -348,8 +348,8 @@ public class RecordServiceImpl implements RecordService {
         String question = (String) map2.get("question");
         pressure1.setUserId(userId);
         recordMapper.pressureUpdate(pressure1);
-        recordMapper.deleteHistory(userId,"血压测量");
-        recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压测量");
+        recordMapper.deleteHistory(userId,"血压分析");
+        recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压分析");
         return Result.success();
     }
 
@@ -364,8 +364,8 @@ public class RecordServiceImpl implements RecordService {
         String question = (String) temperatureMap.get("question");
 
         recordMapper.temperatureUpdate(temperature1);
-        recordMapper.deleteHistory(userId, "体温测量");
-        recordMapper.addHsitory(userId, question, temperature1.getResult(),"体温测量");
+        recordMapper.deleteHistory(userId, "体温分析");
+        recordMapper.addHsitory(userId, question, temperature1.getResult(),"体温分析");
 
         return Result.success();
     }

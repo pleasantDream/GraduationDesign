@@ -34,7 +34,7 @@ public class RecordController {
 
         return histories;
     }
-    @GetMapping("/chat")
+    @PostMapping("/chat")
     public String recordChat(@RequestParam("question") String question,
                              @RequestParam("item") String item) throws JSONException, IOException {
         System.out.println("体检咨询聊天");
