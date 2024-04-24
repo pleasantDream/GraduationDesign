@@ -76,3 +76,19 @@ export const getUrineService = () => {
 export const UpdateUrineService = (UrineData) => {
     return request.post('/record/urine/update', UrineData);
 }
+
+// 获取用户对应体检项目的咨询历史
+export const getHistoryService = (startRow,item) => {
+    const params = new URLSearchParams();
+    params.append("startRow", startRow);
+    params.append("item", item);
+    return request.post('/record/history', params);
+}
+
+// 咨询
+export const chatService = (question, item)=>{
+    const params = new URLSearchParams();
+    params.append("question", question);
+    params.append("item", item);
+    return request.post('/record/chat', params);
+}

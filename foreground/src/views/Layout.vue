@@ -44,7 +44,7 @@ getUserInfo();
                         <el-icon>
                             <User />
                         </el-icon>
-                        <span>体格测量</span>
+                        <span>体格分析</span>
                     </el-menu-item>
                     <el-menu-item index="/record/RecordBlood">
                         <el-icon>
@@ -56,13 +56,13 @@ getUserInfo();
                         <el-icon>
                             <EditPen />
                         </el-icon>
-                        <span>血压测量</span>
+                        <span>血压分析</span>
                     </el-menu-item>
                     <el-menu-item index="/record/RecordTemperature">
                         <el-icon>
                             <EditPen />
                         </el-icon>
-                        <span>体温测量</span>
+                        <span>体温分析</span>
                     </el-menu-item>
                     <el-menu-item index="/record/RecordUrine">
                         <el-icon>

@@ -27,7 +27,7 @@
                     <el-form-item>
                         <el-button type="primary" @click="physicalAdd()">新增</el-button>
                         <el-button type="primary" @click="physicalUpdate()" style="margin-left: 35px;">提交修改</el-button>
-                        <el-button type="primary" @click="userInfoUpdate" style="margin-left: 40px;">咨询</el-button>
+                        <el-button type="primary" @click="getHistory()" style="margin-left: 40px;">咨询</el-button>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -36,6 +36,32 @@
                 <div ref="echartsContainer" style="width: 500px; height: 380px;"></div>
             </el-col>
         </el-row>
+        <!-- 咨询抽屉 -->
+        <el-drawer v-model="visibleDrawer" title="体检咨询" direction="rtl" size="50%"
+            :before-close="closeDrawer" style="border-radius: 20px;">
+            <template #header>
+                <h3>体格测量咨询</h3>
+            </template>
+            <template #default>
+                <!-- 显示聊天消息的容器 -->
+                <div class="message-container">
+                    <div v-for="message in messages" :key="message.id" class="message">
+                        <div v-if="message.isMe" class="message-text mine">{{ message.text }}</div>
+                        <div v-else class="message-text">{{ message.text }}</div>
+                    </div>
+                </div>
+            </template>
+            <template #footer>
+                <el-row>
+                    <el-col :span="20">
+                        <el-input v-model="inputText" type="text" placeholder="输入消息 " />
+                    </el-col>
+                    <el-col :span="4">
+                        <el-button type="primary" @click="sendMessage()">发送</el-button>
+                    </el-col>
+                </el-row>
+            </template>
+        </el-drawer>
     </el-card>
 
 </template>
@@ -43,8 +69,43 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
-import { addPhycialService, getPhycialService, UpdatePhycialService } from '@/api/record.js';
+import { addPhycialService, getPhycialService, UpdatePhycialService, getHistoryService, chatService } from '@/api/record.js';
 
+// 咨询抽屉
+const visibleDrawer = ref(false)
+const histories = ref([])   // 数组
+const messages = ref([])
+const inputText = ref("");
+var startRow = 0;  // 默认分页查询五行,startRow为分页查询的开始行
+const getHistory = async()=>{
+    let result = await getHistoryService(startRow, "体格分析");
+    result.forEach(item => {
+        histories.value.push(item);
+    });
+    for(let i = histories.value.length-1; i>=0; i--){
+        messages.value.push({ text: histories.value[i].question, isMe: true });
+        messages.value.push({ text: histories.value[i].answer, isMe: false });
+    }
+    visibleDrawer.value = true;
+}
+// 抽屉关闭前的回调
+const closeDrawer = (done) => {
+    histories.value.splice(0, histories.value.length);  //清空数组
+    messages.value.splice(0, messages.value.length);
+    done();  // 允许关闭
+}
+const sendMessage = async ()=>{
+    messages.value.push({ text: inputText.value, isMe: true });
+    inputText.value = "";
+    let result = await chatService(inputText.value,"体格分析");
+    messages.value.push({text: result, isMe: false})
+}
+
+
+
+
+
+// 提交修改
 var flag = 1; // 为0表示数据库中没有该用户这个项目的体检数据,可以新增
 const physicalAdd = async()=>{
     console.log(flag)
@@ -162,3 +223,23 @@ const initECharts = () => {
 };
 </script>
 
+<style lang="scss" scoped>
+.message-container {
+    margin-bottom: 10px;
+}
+
+.message {
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.message-text {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.mine {
+    background-color: lightblue;
+}
+
+</style>

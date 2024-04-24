@@ -57,10 +57,10 @@ const userEmailUpdate = async () => {
                     </el-form-item>
                     <el-form-item label="重置邮箱" prop="email">
                         <el-row>
-                            <el-col span="20">
+                            <el-col :span="20">
                                 <el-input v-model="EmailResetData.email"></el-input>
                             </el-col>
-                            <el-col span="4">
+                            <el-col :span="4">
                                 <el-button class="button" type="primary" auto-insert-space
                                     v-on:click="sendCode()">
                                     发送验证码
