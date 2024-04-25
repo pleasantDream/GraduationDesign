@@ -97,6 +97,11 @@ public interface RecordMapper {
             "order by create_time desc limit #{startRow},5")
     List<History> getHistory(Integer userId,String item,Integer startRow);
 
+    @Select("select count(*) from tb_history where user_id=#{userId} and item=#{item}")
+    Integer getSum(Integer userId, String item);
+
     @Delete("delete from tb_history where user_id=#{userId} and item=#{item}")
     void deleteHistory(Integer userId, String item);
+
+
 }

@@ -38,16 +38,61 @@ public class RecordServiceImpl implements RecordService {
     @Autowired
     private RecordMapper recordMapper;
 
+    @Override
+    public Integer recordCount(Integer startRow, String item) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        Integer count = recordMapper.getSum(userId, item);
+        System.out.println("剩余记录条数:");
+        System.out.println(count-startRow-5);
+        return count-startRow-5;
+    }
+    @Override
+    public List<History> recordHistory(Integer startRow, String item) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        List<History> histories = recordMapper.getHistory(userId,item, startRow);
+
+        return histories;
+    }
+
+    @Override
+    public String recordChat(String question, String item) throws JSONException, IOException {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        // 咨询的话只查找最近的五条对话记录
+        List<History> histories = recordMapper.getHistory(userId,item, 0);
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"messages\":[");
+        for (int i = histories.size() - 1; i >= 0; i--) {
+            History history = histories.get(i);
+            sb.append("{\"role\": \"user\",\"content\":\"").append(history.getQuestion());
+            sb.append("\"},{\"role\":\"assistant\",\"content\":\"");
+            sb.append(history.getAnswer()).append("\"},");
+        }
+        sb.append("{\"role\":\"user\",\"content\":\"").append(question).append("\"}]}");
+        String payload = sb.toString();
+        System.out.println(payload);
+        String answer = wenXinYiYan(payload);
+        String answer2 = answer.replace("\n","");
+        System.out.println(answer2);
+
+        recordMapper.addHsitory(userId, question, answer2, item);
+
+        return answer;
+    }
+
     public Map<String, Object> physicalUtil(Physical physical) throws JSONException, IOException {
         // 多次字符串拼接场景下StringBuilder比String更快
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体格检查的体检项目,结果为:性别:");
+        sb.append("你是一个负责我的专业医生，现在我完成了体格检查的体检项目,结果为:性别:");
         sb.append(physical.getGender()).append("年龄:").append(physical.getAge());
         sb.append("身高: ").append(physical.getHeight()).append("米,");
         sb.append("体重: ").append(physical.getWeight()).append("千克,");
         float bmi = physical.getWeight()/(physical.getHeight()*physical.getHeight());
         sb.append("BMI指数: ").append(bmi);
-        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。");
         String content = sb.toString();
 
         StringBuilder sb2 = new StringBuilder();
@@ -87,13 +132,13 @@ public class RecordServiceImpl implements RecordService {
 
     public Map<String, Object> BloodUtil(Blood blood) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了血液分析的体检项目,结果为:性别:");
+        sb.append("你是一个负责我的专业医生，现在我完成了血液分析的体检项目,结果为:性别:");
         sb.append(blood.getGender()).append("年龄:").append(blood.getAge());
         sb.append("血红蛋白: ").append(blood.getHb()).append("g/l,");
         sb.append("血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
         sb.append("血小板计数: ").append(blood.getPlt()).append("*10^9/l,");
         sb.append("血糖: ").append(blood.getGlucose()).append("mg/dl");
-        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。");
         String content = sb.toString();
 
         StringBuilder sb2 = new StringBuilder();
@@ -131,11 +176,11 @@ public class RecordServiceImpl implements RecordService {
 
     public Map<String, Object> pressureUtil(Pressure pressure) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了血压测量的体检项目,结果为:性别:");
+        sb.append("你是一个负责我的专业医生，现在我完成了血压测量的体检项目,结果为:性别:");
         sb.append(pressure.getGender()).append("年龄:").append(pressure.getAge());
         sb.append("高压: ").append(pressure.getHighPressure()).append("mmHg,");
         sb.append("低压: ").append(pressure.getLowPressure()).append("mmHg");
-        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。");
         String content = sb.toString();
 
         StringBuilder sb2 = new StringBuilder();
@@ -172,10 +217,10 @@ public class RecordServiceImpl implements RecordService {
 
     public Map<String, Object> temperatureUtil(Temperature temperature) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了体温测量的体检项目,结果为:性别:");
+        sb.append("你是一个负责我的专业医生，现在我完成了体温测量的体检项目,结果为:性别:");
         sb.append(temperature.getGender()).append("年龄:").append(temperature.getAge());
         sb.append("体温: ").append(temperature.getTemperature()).append("摄氏度");
-        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。");
         String content = sb.toString();
 
         StringBuilder sb2 = new StringBuilder();
@@ -214,13 +259,13 @@ public class RecordServiceImpl implements RecordService {
 
     public Map<String, Object> UrineUtil(Urine urine) throws JSONException, IOException {
         StringBuilder sb = new StringBuilder();
-        sb.append("你是一个专业医生，现在我完成了尿液分析的体检项目,结果为:性别:");
+        sb.append("你是一个负责我的专业医生，现在我完成了尿液分析的体检项目,结果为:性别:");
         sb.append(urine.getGender()).append("年龄:").append(urine.getAge());
         sb.append("尿液比重: ").append(urine.getSg()).append(",");
         sb.append("尿液PH值: ").append(urine.getPh()).append(",");
         sb.append("蛋白质: ").append(urine.getProtein()).append("mg/dl,");
         sb.append("白细胞酯酶: ").append(urine.getLe()).append("U/l");
-        sb.append("请你分析我的体检结果,并给出对应的的建议。50-100字");
+        sb.append("请你分析我的体检结果,并给出对应的的建议。");
         String content = sb.toString();
 
         StringBuilder sb2 = new StringBuilder();
@@ -393,41 +438,6 @@ public class RecordServiceImpl implements RecordService {
                 "此外，建议您保持良好的生活习惯，如保持充足的睡眠、多喝水、避免过度劳累和压力等。这些措施有助于提高您的免疫力，促进身体的恢复。同时，请注意观察自己的身体状况，如有异常症状或体征，请及时就医。\"},{\"role\": \"user\",\"content\":\"我该怎么降温呢\"},{\"role\":\"assistant\",\"content\":\"您可以洗个热水澡,吃感冒药\"},{\"role\":\"user\",\"content\":\"体温多少为正常范围\"}]}    ";
         String result =  wenXinYiYan(sb);
         System.out.println(result);
-    }
-
-    @Override
-    public List<History> recordHistory(Integer startRow, String item) {
-        Map<String, Object> map = ThreadLocalUtil.get();
-        Integer userId = (Integer) map.get("id");
-        List<History> histories = recordMapper.getHistory(userId,item, startRow);
-
-        return histories;
-    }
-
-    @Override
-    public String recordChat(String question, String item) throws JSONException, IOException {
-        Map<String, Object> map = ThreadLocalUtil.get();
-        Integer userId = (Integer) map.get("id");
-        // 咨询的话只查找最近的五条对话记录
-        List<History> histories = recordMapper.getHistory(userId,item, 0);
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"messages\":[");
-        for (int i = histories.size() - 1; i >= 0; i--) {
-            History history = histories.get(i);
-            sb.append("{\"role\": \"user\",\"content\":\"").append(history.getQuestion());
-            sb.append("\"},{\"role\":\"assistant\",\"content\":\"");
-            sb.append(history.getAnswer()).append("\"},");
-        }
-        sb.append("{\"role\":\"user\",\"content\":\"").append(question).append("\"}]}");
-        String payload = sb.toString();
-        System.out.println(payload);
-        String answer = wenXinYiYan(payload);
-        String answer2 = answer.replace("\n","");
-        System.out.println(answer2);
-
-        recordMapper.addHsitory(userId, question, answer2, item);
-
-        return answer;
     }
 
 

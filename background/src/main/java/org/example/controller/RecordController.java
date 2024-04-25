@@ -34,6 +34,13 @@ public class RecordController {
 
         return histories;
     }
+    @PostMapping("/count")
+    public Integer recordCount(@RequestParam("startRow") Integer startRow,
+                               @RequestParam("item") String item){
+        System.out.println("剩余记录条数");
+        Integer count = recordService.recordCount(startRow, item);
+        return count;
+    }
     @PostMapping("/chat")
     public String recordChat(@RequestParam("question") String question,
                              @RequestParam("item") String item) throws JSONException, IOException {

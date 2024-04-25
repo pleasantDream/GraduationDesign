@@ -88,4 +88,5 @@ public interface RecordService {
     String recordChat(String question, String item) throws JSONException, IOException;
 
 
+    Integer recordCount(Integer startRow, String item);
 }

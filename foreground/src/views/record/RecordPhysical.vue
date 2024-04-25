@@ -109,7 +109,7 @@ const closeDrawer = (done) => {
     done();  // 允许关闭
 }
 const sendMessage = async ()=>{
-    messages.value.push({ text: inputText.value, isMe: true });
+    messages.value.push({ text: inputText.value, isMe: true , createTime: new Date()});
     let result = await chatService(inputText.value,"体格分析");
     inputText.value = "";
     messages.value.push({text: result, isMe: false})
