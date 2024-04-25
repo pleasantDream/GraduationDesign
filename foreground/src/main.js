@@ -15,8 +15,25 @@ const persist = createPersistedState()
 pinia.use(persist)
 const app = createApp(App);
 
+// 全局过滤器,格式化时间显示
+app.config.globalProperties.$filters = {
+    formatTime(value) {
+        if (!value) return '';
+        const date = new Date(value);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+        return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    }
+};
+
 // app.use(ChartBlock)
 app.use(router)
 app.use(pinia)
 app.use(ElementPlus);   // 使用饿了么组件
 app.mount('#app')  // 挂载
+
+

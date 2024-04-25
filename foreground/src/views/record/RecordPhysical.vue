@@ -37,17 +37,30 @@
             </el-col>
         </el-row>
         <!-- 咨询抽屉 -->
-        <el-drawer v-model="visibleDrawer" title="体检咨询" direction="rtl" size="50%"
-            :before-close="closeDrawer" style="border-radius: 20px;">
+        <el-drawer v-model="visibleDrawer" title="体检咨询" direction="rtl" size="50%" :before-close="closeDrawer"
+            style="border-radius: 15px;">
             <template #header>
                 <h3>体格测量咨询</h3>
             </template>
             <template #default>
                 <!-- 显示聊天消息的容器 -->
                 <div class="message-container">
-                    <div v-for="message in messages" :key="message.id" class="message">
-                        <div v-if="message.isMe" class="message-text mine">{{ message.text }}</div>
-                        <div v-else class="message-text">{{ message.text }}</div>
+                    <div v-for="message in messages" class="message">
+                        <div v-if="message.isMe" style="display: flex; justify-content: flex-end; /* 将内容靠右对齐 */">
+                            <div>
+                                <p class="timeShow">{{ $filters.formatTime(message.createTime) }}</p>
+                                <div class="message-text mine"> {{ message.text }}</div>
+                            </div>
+                            <span>
+                                <img src="@/assets/default.png" class="avatar-user">
+                            </span>
+                        </div>
+                        <div v-else style="display: flex;">
+                            <span>
+                                <img src="@/assets/avatar-doctor.jpg" class="avatar-doctor">
+                            </span>
+                            <div class="message-text">{{ message.text }}</div>
+                        </div>
                     </div>
                 </div>
             </template>
@@ -83,7 +96,8 @@ const getHistory = async()=>{
         histories.value.push(item);
     });
     for(let i = histories.value.length-1; i>=0; i--){
-        messages.value.push({ text: histories.value[i].question, isMe: true });
+        messages.value.push({ text: histories.value[i].question, 
+            createTime: histories.value[i].createTime,isMe: true });
         messages.value.push({ text: histories.value[i].answer, isMe: false });
     }
     visibleDrawer.value = true;
@@ -96,8 +110,8 @@ const closeDrawer = (done) => {
 }
 const sendMessage = async ()=>{
     messages.value.push({ text: inputText.value, isMe: true });
-    inputText.value = "";
     let result = await chatService(inputText.value,"体格分析");
+    inputText.value = "";
     messages.value.push({text: result, isMe: false})
 }
 
@@ -231,15 +245,36 @@ const initECharts = () => {
 .message {
     padding: 5px;
     margin-bottom: 5px;
+    font-size: .83rem;
 }
 
 .message-text {
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 9px;
+    background-color: #f4f6f8;
+    line-height: 1.625;
 }
 
 .mine {
-    background-color: lightblue;
+    background-color: #d2f9d1;
 }
-
+.timeShow {
+    color: #b7bdc6;
+    font-size: .75rem;
+    line-height: 0.1rem;
+    text-align: right;
+}
+.avatar-user{
+    max-width: 35px;
+    max-height: 35px;
+    border-radius: 50%;
+    margin-top: 3px;
+    margin-left: 5px
+}
+.avatar-doctor{
+    max-width: 35px;
+    max-height: 35px;
+    border-radius: 50%;
+    margin-right: 5px
+}
 </style>
