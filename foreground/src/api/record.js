@@ -92,3 +92,11 @@ export const chatService = (question, item)=>{
     params.append("item", item);
     return request.post('/record/chat', params);
 }
+
+// 剩余记录条数
+export const countService = (startRow, item)=>{
+    const params = new URLSearchParams();
+    params.append("startRow", startRow);
+    params.append("item", item);
+    return request.post('/record/count', params); 
+}
