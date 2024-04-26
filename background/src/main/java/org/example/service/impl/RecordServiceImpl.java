@@ -135,8 +135,8 @@ public class RecordServiceImpl implements RecordService {
         sb.append("你是一个负责我的专业医生，现在我完成了血液分析的体检项目,结果为:性别:");
         sb.append(blood.getGender()).append("年龄:").append(blood.getAge());
         sb.append("血红蛋白: ").append(blood.getHb()).append("g/l,");
-        sb.append("血细胞计数: ").append(blood.getWbc()).append("*10^9/l,");
-        sb.append("血小板计数: ").append(blood.getPlt()).append("*10^9/l,");
+        sb.append("血细胞计数: ").append(blood.getWbc()).append("*10^11/l,");
+        sb.append("血小板计数: ").append(blood.getPlt()).append("*10^12/l,");
         sb.append("血糖: ").append(blood.getGlucose()).append("mg/dl");
         sb.append("请你分析我的体检结果,并给出对应的的建议。");
         String content = sb.toString();
