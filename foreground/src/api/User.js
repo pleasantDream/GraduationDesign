@@ -45,3 +45,10 @@ export const userPasswordUpdateService = (pwdData) => {
     // alert(pwdData)
     return request.patch('/user/password/update', pwdData);
 }
+
+// 修改头像
+export const userAvatarUpdateService = (avatarUrl) => {
+    const params = new URLSearchParams();
+    params.append('avatarUrl', avatarUrl)
+    return request.patch('/user/avatar/updata', params)
+}

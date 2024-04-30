@@ -12,6 +12,7 @@ import RecordUrineVue from '@/views/record/RecordUrine.vue';
 import UserInfoVue from '@/views/user/UserInfo.vue';
 import UserEmailResetVue from '@/views/user/UserEmailReset.vue'
 import UserPwdResetVue from '@/views/user/UserPwdReset.vue';
+import UserAvatarVue from '@/views/user/UserAvatar.vue';
 
 // 定义路由关系
 const routes = [
@@ -25,7 +26,8 @@ const routes = [
             { path: '/record/RecordUrine', component: RecordUrineVue },
             { path: '/user/info', component: UserInfoVue },
             { path: '/user/emailReset', component: UserEmailResetVue },
-            { path: '/user/PwdRest', component: UserPwdResetVue }
+            { path: '/user/PwdReset', component: UserPwdResetVue },
+            { path: '/user/avatarReset', component: UserAvatarVue }
         ]
     }
 ]

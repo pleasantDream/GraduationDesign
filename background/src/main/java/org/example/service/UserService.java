@@ -67,4 +67,6 @@ public interface UserService {
 
 
     Result updatePassword(Map<String, String> params);
+
+    void updateAvatar(String avatarUrl);
 }

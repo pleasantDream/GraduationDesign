@@ -8,6 +8,7 @@ import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
 import org.example.utils.ThreadLocalUtil;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -123,5 +124,11 @@ public class UserController {
         Result result = userService.updatePassword(params);
 
         return result;
+    }
+
+    @PatchMapping("/avatar/updata")
+    public Result updateAvatar(@RequestParam @URL String avatarUrl){
+        userService.updateAvatar(avatarUrl);
+        return Result.success();
     }
 }
