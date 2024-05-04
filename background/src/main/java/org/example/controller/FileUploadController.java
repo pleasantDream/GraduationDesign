@@ -13,7 +13,7 @@ public class FileUploadController {
 
     @PostMapping("/upload")
     public Result<String> upload(MultipartFile file) throws Exception {
-        System.out.println("图像上传接口");
+        System.out.println("头像上传接口");
         // 把文件内容存储到本地磁盘上
         String originalFilename = file.getOriginalFilename();
         // 保证文件名唯一,防止文件覆盖
