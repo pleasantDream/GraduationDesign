@@ -58,7 +58,8 @@
                                 <div class="message-text mine"> {{ message.text }}</div>
                             </div>
                             <span>
-                                <img src="@/assets/default.png" class="avatar-user">
+                                <img v-if="imgUrl" :src="imgUrl" class="avatar-user">
+                                <img v-else :src="avatar" class="avatar-user">
                             </span>
                         </div>
                         <div v-else style="display: flex;">
@@ -97,6 +98,10 @@ const histories = ref([])   // 数组
 const messages = ref([])
 const inputText = ref("");
 const count = ref(""); // 剩余记录条数
+//获取用户头像地址
+import useUserInfoStore from '@/stores/userInfo.js'
+const UserInfoStore = useUserInfoStore();
+const imgUrl = ref(UserInfoStore.info.userPic)
 var startRow = 0;  // 默认分页查询五行,startRow为分页查询的开始行
 const getHistory = async () => {
     let result = await getHistoryService(startRow, "血压分析");
