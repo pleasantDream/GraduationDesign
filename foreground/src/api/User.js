@@ -1,7 +1,7 @@
 // 导入request.js请求工具
 import request from '../utils/request.js';
 
-// 调用后台登录接口
+// 调用后台账号密码登录接口
 export const userLoginService = (loginData) => {
     const params = new URLSearchParams();
     for (let key in loginData) {
@@ -9,9 +9,18 @@ export const userLoginService = (loginData) => {
     }
     return request.post('/user/login', params);
 }
+// 邮箱登录
+export const userLoginByEmailService = (loginData)=>{
+    const params = new URLSearchParams();
+    for (let key in loginData) {
+        params.append(key, loginData[key]);
+    }
+    return request.post('/user/loginByEmail', params);
+}
+
 // 调用后台发送验证码接口
 export const sendValidation = (email) => {
-    return request.get(`/user/register?email=${email}`);
+    return request.get(`/user/emailValidation?email=${email}`);
 }
 
 // 调用后台注册接口

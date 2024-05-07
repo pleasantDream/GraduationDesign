@@ -2,19 +2,27 @@
 import { User, Lock, Connection, EditPen} from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { userLoginService, sendValidation, userRegisterService } from '../api/user.js'
+import { userLoginService, sendValidation, userRegisterService, userLoginByEmailService } from '../api/user.js'
 import { useRouter } from 'vue-router'
 import { useTokenStore } from '@/stores/token.js'
 const router = useRouter();
 const tokenStore = useTokenStore();
 
-//控制注册与登录表单的显示， 默认显示注册
+// 控制注册、账号密码登录和邮箱登录的显示，默认显示账号密码登录
+const isLogin = ref(true)
 const isRegister = ref(false)
-
-// 登录数据模型
+const isLoginByEmail = ref(false)
+// 账号密码登录数据模型
 const LoginData = ref({
     username: "",
     password: "",
+})
+// 邮箱登录数据模型
+const LoginByEmailData = ref({
+    email:"",
+    reEmail:"",
+    code:"",
+    reCode:""
 })
 // 登录表单校验规则
 const LoginRules = {
@@ -27,7 +35,7 @@ const LoginRules = {
         { min: 5, max: 16, message: '长度为5-16位非空字符', trigger: 'blur' }
     ]
 }
-// 登录函数
+// 账号密码登录函数
 const login = async () => {
     let result = await userLoginService(LoginData.value);
     if(result.code == 0){
@@ -40,6 +48,28 @@ const login = async () => {
         ElMessage.error(result);
     }
 }
+// 发送验证码
+const sendCode2 = async (email) => {
+    // 发送给用户的验证码，前端也接收。
+    // 还有发送这个验证码时用的邮箱，防止用户后面修改邮箱
+    LoginByEmailData.value.reEmail = email;
+    let result = await sendValidation(email);
+    LoginByEmailData.value.reCode = result.code;
+}
+// 邮箱登录函数
+const loginByEamil = async()=>{
+    let result = await userLoginByEmailService(LoginByEmailData.value);
+    if (result.code == 0) {
+        ElMessage.success('登录成功');
+        // 将登录成功得到的token存储到pinia中
+        tokenStore.setToken(result.data);
+        // 借助路由跳转到首页
+        router.push('/');
+    } else {
+        ElMessage.error(result);
+    }
+}
+
 // 注册数据模型
 const RegisterData = ref({
     username: "",
@@ -96,9 +126,9 @@ const RegisterRules = {
 const sendCode = async (email) => {
     // 发送给用户的验证码，前端也接收。
     // 还有发送这个验证码时用的邮箱，防止用户后面修改邮箱
+    RegisterData.value.reEmail = email;
     let result = await sendValidation(email);
     RegisterData.value.reCode = result.code;
-    RegisterData.reEmail = result.reEmail;
 }
 // 注册函数
 const register = async () => {
@@ -151,19 +181,20 @@ const register = async () => {
                     </el-button>
                 </el-form-item>
                 <el-form-item class="flex">
-                    <el-link type="info" :underline="false" @click="isRegister = false">
-                        ← 返回
+                    <el-link type="info" :underline="false" @click="isLogin=true; isRegister=false">
+                        账号密码登录 →
+                    </el-link>
+                    <el-link type="info" :underline="false" @click="isLoginByEmail=true; isRegister=false"
+                        style="margin-left: auto;">
+                        邮箱登录 →
                     </el-link>
                 </el-form-item>
             </el-form>
 
-
-
-
-            <!-- 登录表单 -->
-            <el-form ref="form" size="large" autocomplete="off" v-else :model="LoginData" :rules="LoginRules">
+            <!-- 账号密码登录表单 -->
+            <el-form ref="form" size="large" autocomplete="off" v-if="isLogin" :model="LoginData" :rules="LoginRules">
                 <el-form-item>
-                    <h1>登录</h1>
+                    <h1>账号密码登录</h1>
                 </el-form-item>
                 <el-form-item prop="username">
                     <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="LoginData.username"></el-input>
@@ -174,7 +205,6 @@ const register = async () => {
                 </el-form-item>
                 <el-form-item class="flex">
                     <div class="flex">
-                        <el-checkbox>记住我</el-checkbox>
                         <el-link type="primary" :underline="false">忘记密码？</el-link>
                     </div>
                 </el-form-item>
@@ -183,11 +213,46 @@ const register = async () => {
                     <el-button class="button" type="primary" auto-insert-space v-on:click="login">登录</el-button>
                 </el-form-item>
                 <el-form-item class="flex">
-                    <el-link type="info" :underline="false" @click="isRegister = true">
+                    <el-link type="info" :underline="false" @click="isRegister=true; isLogin=false">
                         注册 →
+                    </el-link>
+                    <el-link type="info" :underline="false" @click="isLoginByEmail=true; isLogin=false"
+                        style="margin-left: auto;">
+                        邮箱登录 →
                     </el-link>
                 </el-form-item>
             </el-form>
+
+            <!-- 邮箱登录表单 -->
+            <el-form ref="form" size="large" autocomplete="off" v-if="isLoginByEmail" :model="LoginByEmailData"
+                :rules="RegisterRules">
+                <el-form-item>
+                    <h1>邮箱登录</h1>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <el-input :prefix-icon="Connection" placeholder="请输入邮箱" v-model="LoginByEmailData.email"></el-input>
+                    <el-button class="button" type="primary" auto-insert-space
+                        v-on:click="sendCode2(LoginByEmailData.email)">
+                        发送验证码
+                    </el-button>
+                </el-form-item>
+                <el-form-item prop="code">
+                    <el-input :prefix-icon="EditPen" placeholder="请输入验证码" v-model="LoginByEmailData.code"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button class="button" type="primary" auto-insert-space v-on:click="loginByEamil">登录</el-button>
+                </el-form-item>
+                <el-form-item class="flex">
+                    <el-link type="info" :underline="false" @click="isRegister=true; isLoginByEmail=false">
+                        注册 →
+                    </el-link>
+                    <el-link type="info" :underline="false" @click="isLogin=true; isLoginByEmail=false"
+                        style="margin-left: auto;">
+                        账号密码登录 →
+                    </el-link>
+                </el-form-item>
+            </el-form>
+
         </el-col>
     </el-row>
 </template>
