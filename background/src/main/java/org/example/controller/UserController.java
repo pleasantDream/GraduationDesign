@@ -59,12 +59,12 @@ public class UserController {
      * @return 发送验证码给邮箱同时将其返回给前端
      */
     @GetMapping("/emailValidation")
-    public Map<String,String> emailValidation(@RequestParam("email") @Email String email){
+    public String emailValidation(@RequestParam("email") @Email String email){
         System.out.println("验证码发送接口");
-        Map<String,String> map  = userService.emailValidation(email);
+        String code = userService.emailValidation(email);
 
         // 返回验证码和对应的邮箱给前端
-        return map;
+        return code;
     }
 
 

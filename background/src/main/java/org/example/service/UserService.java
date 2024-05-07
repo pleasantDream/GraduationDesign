@@ -56,7 +56,7 @@ public interface UserService {
      * @param email 邮箱
      * @return 验证码
      */
-    Map<String,String> emailValidation(String email);
+    String emailValidation(String email);
 
     /**
      *

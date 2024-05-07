@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, String> emailValidation(String email) {
+    public String emailValidation(String email) {
         try {
             //创建一个Html实例对象
             HtmlEmail htmlEmail = new HtmlEmail();
@@ -144,16 +144,12 @@ public class UserServiceImpl implements UserService {
             //发送
             htmlEmail.send();
 
-            Map<String, String> map = new HashMap<>();
-            map.put("userEmail", email);
-            map.put("code", code);
-            return map;
-        }
-        catch (EmailException e) {
-            e.printStackTrace();
+            return code;
+        } catch (EmailException e) {
             System.out.println("发送失败");
-            return new HashMap<String, String>();
+            e.printStackTrace();
         }
+        return "";
     }
 
     @Override
@@ -204,10 +200,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result loginByEmail(String email,String reEmail, String code, String reCode) {
-        // 防止用户在发送验证码后修改邮箱
-        if (email==null || email.equals("") || !email.equals(reEmail)){
-            return Result.error("邮箱被修改");
-        }
         // 查询用户
         User user = userMapper.findByUserEmail(email);
         if(user == null){
@@ -216,6 +208,10 @@ public class UserServiceImpl implements UserService {
         // 验证码验证, 考虑用户未点击发送验证码, 直接点击登录按钮
         if(code == null || code.equals("") || !code.equals(reCode)){
             return Result.error("验证码错误");
+        }
+        // 防止用户在发送验证码后修改邮箱
+        if (email==null || email.equals("") || !email.equals(reEmail)){
+            return Result.error("邮箱被修改");
         }
         // 登录成功,claims指jwt令牌中有效载荷的json数据，因为可能有多个载荷，所以用map存储
         HashMap<String, Object> claims = new HashMap<>();
