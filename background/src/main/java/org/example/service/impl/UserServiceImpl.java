@@ -201,4 +201,29 @@ public class UserServiceImpl implements UserService {
         Integer id = (Integer) map.get("id");
         userMapper.updateAvatar(avatarUrl, id);
     }
+
+    @Override
+    public Result loginByEmail(String email,String reEmail, String code, String reCode) {
+        // 防止用户在发送验证码后修改邮箱
+        if (email==null || email.equals("") || !email.equals(reEmail)){
+            return Result.error("邮箱被修改");
+        }
+        // 查询用户
+        User user = userMapper.findByUserEmail(email);
+        if(user == null){
+            return Result.error("邮箱未注册");
+        }
+        // 验证码验证, 考虑用户未点击发送验证码, 直接点击登录按钮
+        if(code == null || code.equals("") || !code.equals(reCode)){
+            return Result.error("验证码错误");
+        }
+        // 登录成功,claims指jwt令牌中有效载荷的json数据，因为可能有多个载荷，所以用map存储
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("id",user.getId());
+        claims.put("username",user.getUsername());
+        String token = JwtUtil.genToken(claims);
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.set(token, token, 24, TimeUnit.HOURS);
+        return Result.success(token);
+    }
 }

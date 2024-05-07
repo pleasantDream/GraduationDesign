@@ -41,18 +41,16 @@ public class UserController {
      */
     @PostMapping("/register")
     public Result register(
-        @Param("username") String username,
-        @Param("password") String password,
-        @Param("password") String rePassword,
-        @Param("email") @Email String email,
-        @Param("reEmail") @Email String reEmail,
-        @Param("code") String code,
-        @Param("reCode") String reCode
+        @RequestParam("username") String username,
+        @RequestParam("password") String password,
+        @RequestParam("password") String rePassword,
+        @RequestParam("email") @Email String email,
+        @RequestParam("reEmail") @Email String reEmail,
+        @RequestParam("code") String code,
+        @RequestParam("reCode") String reCode
     ){
-        // 得到响应结果
-        Result result = userService.register(username, password, rePassword,email,reEmail, code, reCode);
-
-        return result;
+        // 返回响应结果
+        return userService.register(username, password, rePassword,email,reEmail, code, reCode);
     }
 
     /**
@@ -60,15 +58,26 @@ public class UserController {
      * @param email 用户邮箱
      * @return 发送验证码给邮箱同时将其返回给前端
      */
-    @GetMapping("/register")
-    public Map<String,String> emailValidation(@Param("email") @Email String email){
-        System.out.println("验证码发送接口被调用");
+    @GetMapping("/emailValidation")
+    public Map<String,String> emailValidation(@RequestParam("email") @Email String email){
+        System.out.println("验证码发送接口");
         Map<String,String> map  = userService.emailValidation(email);
 
         // 返回验证码和对应的邮箱给前端
         return map;
     }
 
+
+    @PostMapping("/loginByEmail")
+    public Result loginByEmail(@RequestParam("email") @Email String email,
+                               @RequestParam("reEmail") @Email String reEmail,
+                               @RequestParam("code") String code,
+                               @RequestParam("reCode") String reCode){
+        System.out.println("通过邮箱登录");
+        // 返回响应结果
+        return userService.loginByEmail(email,reEmail,code,reCode);
+
+    }
 
     /**
      *
@@ -77,7 +86,8 @@ public class UserController {
      * @return 登录是否成功
      */
     @PostMapping("/login")
-    public Result login(@Param("username") String username,@Param("password") String password){
+    public Result login(@RequestParam("username") String username,
+                        @RequestParam("password") String password){
         System.out.println("登录接口被调用");
         Result result = userService.login(username, password);
 
