@@ -71,4 +71,6 @@ public interface UserService {
     void updateAvatar(String avatarUrl);
 
     Result loginByEmail(String email, String reEmail,String code, String reCode);
+
+    Result forgetPassword(String newPassword, String rePassword, String email);
 }

@@ -57,4 +57,7 @@ public interface UserMapper {
 
     @Update("update tb_user set user_pic=#{avatarUrl} where id=#{id}")
     void updateAvatar(String avatarUrl, Integer id);
+
+    @Update("update tb_user set password=#{md5String} where email=#{email}")
+    void updatePwdByEmail(String md5String, String email);
 }

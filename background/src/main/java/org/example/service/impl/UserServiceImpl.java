@@ -222,4 +222,14 @@ public class UserServiceImpl implements UserService {
         operations.set(token, token, 24, TimeUnit.HOURS);
         return Result.success(token);
     }
+
+    @Override
+    public Result forgetPassword(String newPassword, String rePassword, String email) {
+        if(newPassword==null||rePassword==null||newPassword==("")||!newPassword.equals(rePassword)){
+            return Result.error("重置密码失败");
+        }
+        String md5String = Md5Util.getMD5String(newPassword);
+        userMapper.updatePwdByEmail(md5String,email);
+        return Result.success();
+    }
 }

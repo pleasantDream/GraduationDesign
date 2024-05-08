@@ -67,7 +67,22 @@ public class UserController {
         return code;
     }
 
+    @PostMapping("/forgetPassword")
+    public Result forgetPassword(@RequestParam("newPassword") String newPassword,
+                                 @RequestParam("rePassword") String rePassword,
+                                 @RequestParam("email") @Email String email){
+        System.out.println("忘记密码");
+        return userService.forgetPassword(newPassword, rePassword, email);
+    }
 
+    /**
+     *
+     * @param email
+     * @param reEmail
+     * @param code
+     * @param reCode
+     * @return
+     */
     @PostMapping("/loginByEmail")
     public Result loginByEmail(@RequestParam("email") @Email String email,
                                @RequestParam("reEmail") @Email String reEmail,
