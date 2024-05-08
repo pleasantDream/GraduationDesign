@@ -27,9 +27,6 @@
                     <el-form-item label="血糖(mg/dl)">
                         <el-input v-model="blood.glucose"></el-input>
                     </el-form-item>
-                    <el-form-item label="分析和建议">
-                        <el-input v-model="blood.result" type="textarea" />
-                    </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="bloodAdd()">新增</el-button>
                         <el-button type="primary" @click="bloodUpdate()" style="margin-left: 24px;">提交修改</el-button>
@@ -41,6 +38,9 @@
             <el-col :span="12" style="margin-left: 32px;">
                 <div ref="echartsContainer" style="width: 500px; height: 450px;"></div>
             </el-col>
+            <el-form-item label="分析和建议">
+                <div class="message-text mine">{{ blood.result }}</div>
+            </el-form-item>
         </el-row>
         <!-- 咨询抽屉 -->
         <el-drawer v-model="visibleDrawer" title="体检咨询" direction="rtl" size="50%" :before-close="closeDrawer"
