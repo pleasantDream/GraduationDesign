@@ -72,5 +72,5 @@ public interface UserService {
 
     Result loginByEmail(String email, String reEmail,String code, String reCode);
 
-    Result forgetPassword(String newPassword, String rePassword, String email);
+    Result forgetPassword(String newPassword, String rePassword, String email, String code, String reCode);
 }

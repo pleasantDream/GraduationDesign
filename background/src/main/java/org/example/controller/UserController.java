@@ -62,7 +62,7 @@ public class UserController {
     public String emailValidation(@RequestParam("email") @Email String email){
         System.out.println("验证码发送接口");
         String code = userService.emailValidation(email);
-
+        System.out.println(code);
         // 返回验证码和对应的邮箱给前端
         return code;
     }
@@ -70,9 +70,11 @@ public class UserController {
     @PostMapping("/forgetPassword")
     public Result forgetPassword(@RequestParam("newPassword") String newPassword,
                                  @RequestParam("rePassword") String rePassword,
-                                 @RequestParam("email") @Email String email){
+                                 @RequestParam("email") @Email String email,
+                                 @RequestParam("code") String code,
+                                 @RequestParam("reCode") String reCode){
         System.out.println("忘记密码");
-        return userService.forgetPassword(newPassword, rePassword, email);
+        return userService.forgetPassword(newPassword, rePassword, email, code, reCode);
     }
 
     /**

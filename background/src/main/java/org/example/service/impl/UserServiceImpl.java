@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
             System.out.println("发送失败");
             e.printStackTrace();
         }
-        return "";
+        return "失败";
     }
 
     @Override
@@ -206,11 +206,11 @@ public class UserServiceImpl implements UserService {
             return Result.error("邮箱未注册");
         }
         // 验证码验证, 考虑用户未点击发送验证码, 直接点击登录按钮
-        if(code == null || code.equals("") || !code.equals(reCode)){
+        if(code == null || "".equals(code) || !code.equals(reCode)){
             return Result.error("验证码错误");
         }
         // 防止用户在发送验证码后修改邮箱
-        if (email==null || email.equals("") || !email.equals(reEmail)){
+        if (email==null || "".equals(email) || !email.equals(reEmail)){
             return Result.error("邮箱被修改");
         }
         // 登录成功,claims指jwt令牌中有效载荷的json数据，因为可能有多个载荷，所以用map存储
@@ -224,8 +224,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Result forgetPassword(String newPassword, String rePassword, String email) {
-        if(newPassword==null||rePassword==null||newPassword==("")||!newPassword.equals(rePassword)){
+    public Result forgetPassword(String newPassword, String rePassword, String email,String code, String reCode) {
+        if(!code.equals(reCode)){
+            return Result.error("验证码错误");
+        }
+        if(newPassword == null || "".equals(newPassword) || !newPassword.equals(rePassword)){
             return Result.error("重置密码失败");
         }
         String md5String = Md5Util.getMD5String(newPassword);
