@@ -17,6 +17,15 @@ export const userLoginByEmailService = (loginData)=>{
     }
     return request.post('/user/loginByEmail', params);
 }
+// 忘记密码
+export const resetPwdService = (resetPwdData)=>{
+    const params = new URLSearchParams();
+    for (let key in resetPwdData) {
+        params.append(key, resetPwdData[key]);
+    }
+    alert(params);
+    return request.post('/user/forgetPassword', params);
+}
 
 // 调用后台发送验证码接口
 export const sendValidation = (email) => {

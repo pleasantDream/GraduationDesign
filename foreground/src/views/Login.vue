@@ -2,16 +2,42 @@
 import { User, Lock, Connection, EditPen} from '@element-plus/icons-vue'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { userLoginService, sendValidation, userRegisterService, userLoginByEmailService } from '../api/user.js'
+import { userLoginService, sendValidation, userRegisterService, userLoginByEmailService, resetPwdService } from '../api/user.js'
 import { useRouter } from 'vue-router'
 import { useTokenStore } from '@/stores/token.js'
 const router = useRouter();
 const tokenStore = useTokenStore();
 
-// 控制注册、账号密码登录和邮箱登录的显示，默认显示账号密码登录
+// 控制注册、账号密码登录、邮箱登录和重置密码的显示，默认显示账号密码登录
 const isLogin = ref(true)
 const isRegister = ref(false)
 const isLoginByEmail = ref(false)
+const isResetPwd = ref(false)
+// 重置密码数据模型
+const resetPwdData = ref({
+    newPassword:"",
+    rePassword: "",
+    email:"",
+    code:"",
+    reCode:""    
+})
+// 重置密码发送验证码
+const sendCode3 = async (email) => {
+    let result = await sendValidation(email);
+    resetPwdData.value.reCode = result;
+}
+// 重置密码
+const resetPwd = async()=>{
+    let result = await resetPwdService(resetPwdData.value);
+    if (result.code == 0) {
+        ElMessage.success('重置密码成功');
+        // 显示账号密码登录表单
+        isResetPwd.value=false;
+        isLogin.value=true;
+    } else {
+        ElMessage.error(result);
+    }
+}
 // 账号密码登录数据模型
 const LoginData = ref({
     username: "",
@@ -54,7 +80,7 @@ const sendCode2 = async (email) => {
     // 还有发送这个验证码时用的邮箱，防止用户后面修改邮箱
     LoginByEmailData.value.reEmail = email;
     let result = await sendValidation(email);
-    LoginByEmailData.value.reCode = result.code;
+    LoginByEmailData.value.reCode = result;
 }
 // 邮箱登录函数
 const loginByEamil = async()=>{
@@ -128,7 +154,7 @@ const sendCode = async (email) => {
     // 还有发送这个验证码时用的邮箱，防止用户后面修改邮箱
     RegisterData.value.reEmail = email;
     let result = await sendValidation(email);
-    RegisterData.value.reCode = result.code;
+    RegisterData.value.reCode = result;
 }
 // 注册函数
 const register = async () => {
@@ -205,7 +231,8 @@ const register = async () => {
                 </el-form-item>
                 <el-form-item class="flex">
                     <div class="flex">
-                        <el-link type="primary" :underline="false">忘记密码？</el-link>
+                        <el-link type="primary" :underline="false"
+                            @click="isResetPwd=true; isLogin=false">忘记密码？</el-link>
                     </div>
                 </el-form-item>
                 <!-- 登录按钮 -->
@@ -249,6 +276,40 @@ const register = async () => {
                     <el-link type="info" :underline="false" @click="isLogin=true; isLoginByEmail=false"
                         style="margin-left: auto;">
                         账号密码登录 →
+                    </el-link>
+                </el-form-item>
+            </el-form>
+
+            <!-- 重置密码表单 -->
+            <el-form ref="form" size="large" autocomplete="off" v-if="isResetPwd" :model="resetPwdData"
+                :rules="RegisterRules">
+                <el-form-item>
+                    <h1>重置密码</h1>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <el-input :prefix-icon="Connection" placeholder="请输入邮箱" v-model="resetPwdData.email"></el-input>
+                    <el-button class="button" type="primary" auto-insert-space
+                        v-on:click="sendCode3(resetPwdData.email)">
+                        发送验证码
+                    </el-button>
+                </el-form-item>
+                <el-form-item prop="code">
+                    <el-input :prefix-icon="EditPen" placeholder="请输入验证码" v-model="resetPwdData.code"></el-input>
+                </el-form-item>
+                <el-form-item prop="newPassword">
+                    <el-input name="password" :prefix-icon="Lock" type="password" placeholder="新密码"
+                        v-model="resetPwdData.newPassword"></el-input>
+                </el-form-item>
+                <el-form-item prop="rePassword">
+                    <el-input name="password" :prefix-icon="Lock" type="password" placeholder="确认密码"
+                        v-model="resetPwdData.rePassword"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button class="button" type="primary" auto-insert-space @click="resetPwd">重置密码</el-button>
+                </el-form-item>
+                <el-form-item class="flex">
+                    <el-link type="info" :underline="false" @click="isLogin = true; isResetPwd = false">
+                        ← 返回
                     </el-link>
                 </el-form-item>
             </el-form>
