@@ -60,7 +60,7 @@
                     <div v-for="message in messages" class="message">
                         <div v-if="message.isMe" style="display: flex; justify-content: flex-end; /* 将内容靠右对齐 */">
                             <div>
-                                <p class="timeShow">{{ $filters.formatTime(message.createTime) }}</p>
+                                <p class="timeShow">{{ formatTime(message.createTime) }}</p>
                                 <div class="message-text mine"> {{ message.text }}</div>
                             </div>
                             <span>
@@ -96,6 +96,7 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
+import { formatTime } from '@/utils/formatTime.js';
 import { addBloodService, getBloodService, UpdateBloodService, getHistoryService, chatService, countService } from '@/api/record.js';
 
 

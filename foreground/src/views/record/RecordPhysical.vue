@@ -1,8 +1,10 @@
 <template>
-    <el-card class="page-container">
+    <el-card class="page-container" v-if="isTest">
         <template #header>
             <div class="header">
                 <span>体格分析</span>
+                <el-button type="primary" styel="margin-left: auto;"
+                    @click="isTest = false; isRecord = true; goRecord() ">体检记录</el-button>
             </div>
         </template>
         <el-row>
@@ -54,7 +56,7 @@
                     <div v-for="message in messages" class="message">
                         <div v-if="message.isMe" style="display: flex; justify-content: flex-end; /* 将内容靠右对齐 */">
                             <div>
-                                <p class="timeShow">{{ $filters.formatTime(message.createTime) }}</p>
+                                <p class="timeShow">{{ formatTime(message.createTime) }}</p>
                                 <div class="message-text mine"> {{ message.text }}</div>
                             </div>
                             <span>
@@ -85,12 +87,64 @@
         </el-drawer>
     </el-card>
 
+    <el-card class="page-container" v-if="isRecord">
+        <template #header>
+            <div class="header">
+                <span>体检记录</span>
+                <el-button type="primary" style="margin-left: auto;"
+                    @click="isRecord = false; isTest = true; goBack();">体格分析</el-button>
+            </div>
+        </template>
+        <el-row>
+            <el-col :span="10">
+                <el-table :data="records" stripe style="width: 100%">
+                    <el-table-column prop="time" label="时间" width="100" />
+                    <el-table-column prop="height" label="身高" width="100" />
+                    <el-table-column prop="weight" label="体重" width="100" />
+                    <el-table-column prop="bmi" label="BMI" width="100" />
+                </el-table>
+            </el-col>
+            <el-col :span="12" style="margin-left: 32px;">
+                <div ref="echartsContainer2" style="width: 500px; height: 380px;"></div>
+            </el-col>
+        </el-row>
+
+    </el-card>
 </template>
 
 <script setup>
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
-import { addPhycialService, getPhycialService, UpdatePhycialService, getHistoryService, chatService, countService } from '@/api/record.js';
+import { formatTime } from '@/utils/formatTime.js';
+import { addPhycialService, getPhycialService, UpdatePhycialService, getHistoryService, chatService, countService, getRecordService } from '@/api/record.js';
+/*体检记录 */
+const records = ref([]);
+const goBack = async()=>{
+    try {
+        records.value.splice(0, records.value.length);  //清空数组
+        let result = await getPhycialService();
+        physical.value = result;
+        initECharts(); 
+    } catch (error) {
+        console.error('Failed to fetch physical data:', error);
+    }
+}
+const goRecord = async()=>{
+    try {
+        let result = await getRecordService("tb_physical");
+        result.data.forEach(item => {
+            item.time = formatTime(item.time);
+            records.value.push(item);
+        });
+        initECharts2();
+    } catch (error) {
+        console.error('Failed to fetch physical data:', error);
+    }
+}
+
+/*体检分析和体检记录页面显示*/
+const isTest = ref(true)
+const isRecord = ref(false)
 
 /* 咨询抽屉 */
 const visibleDrawer = ref(false)
@@ -118,7 +172,6 @@ const getHistory = async()=>{
     histories.value.splice(0, histories.value.length);  //清空数组
 
     /*添加滚轮自动滚到最底部的功能*/
-
     visibleDrawer.value = true;
 }
 // 抽屉关闭前的回调
@@ -193,7 +246,7 @@ const physical = ref({});
 // 异步获取体格测量数据
 const getPhysicalData = async () => {
     try {
-        const result = await getPhycialService();
+        let result = await getPhycialService();
         physical.value = result;
         initECharts(); // 数据加载完成后初始化 ECharts
     } catch (error) {
@@ -201,7 +254,7 @@ const getPhysicalData = async () => {
     }
 };
 
-// 使用onMounted()钩子来在组件挂载后执行异步获取物理数据的操作
+// 使用onMounted()钩子来在组件挂载后执行异步获取数据的操作
 onMounted(getPhysicalData);
 
 import * as echarts from 'echarts';
@@ -223,7 +276,7 @@ const initECharts = () => {
     }
 
     // 创建图表实例
-    const myChart = echarts.init(echartsContainer.value);
+    let myChart = echarts.init(echartsContainer.value);
 
     // 指定图表的配置项和数据
     const option = {
@@ -275,9 +328,72 @@ const initECharts = () => {
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 };
+// 体检记录的折线图
+const echartsContainer2 = ref(null);
+const initECharts2 = () => {
+    let myChart = echarts.init(echartsContainer2.value);
+    const option = {
+        title: {
+            text: '体格测量记录'
+        },
+        tooltip: {
+            trigger: 'axis',
+        },
+        legend: {
+            data: ['体重', 'bmi']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        
+        toolbox: {
+            show: true,
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true },
+            },
+        },
+        calaulable: true,
+        xAxis: {
+            type: 'category',
+            data: [records.value[0].time, records.value[1].time, records.value[2].time, records.value[3].time, records.value[4].time]
+        },
+        yAxis: {
+            type: 'value',
+        },
+
+        series: [
+            {
+                name: '体重',
+                type: 'line',
+                stack: 'Total',
+                data: [records.value[0].weight, records.value[1].weight, records.value[2].weight, records.value[3].weight, records.value[4].weight]
+            },
+            {
+                name: 'bmi',
+                type: 'line',
+                stack: 'Total',
+                data: [records.value[0].bmi, records.value[1].bmi, records.value[2].bmi, records.value[3].bmi, records.value[4].bmi]
+            }
+        ]
+    };
+    myChart.setOption(option);
+};
+
 </script>
 
 <style lang="scss" scoped>
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+
 .message-container {
     margin-bottom: 10px;
 }

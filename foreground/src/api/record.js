@@ -100,3 +100,8 @@ export const countService = (startRow, item)=>{
     params.append("item", item);
     return request.post('/record/count', params); 
 }
+
+// 获取体检记录
+export const getRecordService = (item) =>{
+    return request.get(`/record/getRecord?item=${item}`);
+}
