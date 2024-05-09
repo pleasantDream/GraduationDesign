@@ -360,7 +360,16 @@ public class RecordServiceImpl implements RecordService {
         String question = (String) map2.get("question");
         physical1.setUserId(userId);
 
-        recordMapper.physicalUpdate(physical1);
+        Integer count = recordMapper.getCount(userId,"tb_physical");
+        if (count < 5){
+            // 记录小于五条直接插入
+            recordMapper.physicalUpdate(physical1);
+        }else {
+            // 删除最早的一条记录然后插入
+            recordMapper.deleteCount(userId,"tb_physical");
+            recordMapper.physicalUpdate(physical1);
+        }
+        // 重置咨询历史
         recordMapper.deleteHistory(userId, "体格分析");
         recordMapper.addHsitory(userId, question, physical1.getResult(), "体格分析");
 

@@ -53,7 +53,7 @@ public interface RecordMapper {
     void addUrine(Urine urine);
 
 
-    @Select("select * from tb_physical where userid = #{userId}")
+    @Select("select * from tb_physical where userid = #{userId} order by time DESC LIMIT 1")
     Physical getPhysical(Integer userId);
 
     @Select("select * from tb_pressure where userid = #{userId}")
@@ -68,8 +68,8 @@ public interface RecordMapper {
     @Select("select * from tb_urine where userid = #{userId}")
     Urine getUrine(Integer userId);
 
-    @Update("update tb_physical set gender=#{gender}, age=#{age}, time=NOW(), height=#{height}, " +
-            "weight=#{weight}, bmi=#{bmi}, result=#{result} where userid=#{userId}")
+    @Update("insert into tb_physical (gender, age, userId, time, height, weight, bmi, result) " +
+            "values (#{gender}, #{age}, #{userId}, NOW(), #{height}, #{weight}, #{bmi}, #{result})")
     void physicalUpdate(Physical physical);
 
 
@@ -103,5 +103,17 @@ public interface RecordMapper {
     @Delete("delete from tb_history where user_id=#{userId} and item=#{item}")
     void deleteHistory(Integer userId, String item);
 
+    @Select({
+            "SELECT COUNT(*) FROM",
+            "${item}",
+            "WHERE userId = #{userId}"
+    })
+    Integer getCount(Integer userId, String item);
 
+    @Delete({
+            "DELETE FROM",
+            "${item}",
+            "WHERE userId = #{userId} ORDER BY time LIMIT 1"
+    })
+    void deleteCount(Integer userId, String item);
 }
