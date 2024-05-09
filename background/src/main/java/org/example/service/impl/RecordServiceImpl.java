@@ -20,10 +20,7 @@ import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingDeque;
 
 
@@ -48,6 +45,16 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(count-startRow-5);
         return count-startRow-5;
     }
+
+    @Override
+    public Result  getRecord(String item) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        List<LinkedHashMap> list = recordMapper.getRecordPhysical(userId,item);
+        System.out.println(list);
+        return Result.success(list);
+    }
+
     @Override
     public List<History> recordHistory(Integer startRow, String item) {
         Map<String, Object> map = ThreadLocalUtil.get();

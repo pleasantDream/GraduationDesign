@@ -89,4 +89,6 @@ public interface RecordService {
 
 
     Integer recordCount(Integer startRow, String item);
+
+    Result getRecord(String item);
 }

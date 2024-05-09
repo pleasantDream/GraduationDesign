@@ -3,7 +3,9 @@ package org.example.mapper;
 import org.apache.ibatis.annotations.*;
 import org.example.pojo.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -116,4 +118,8 @@ public interface RecordMapper {
             "WHERE userId = #{userId} ORDER BY time LIMIT 1"
     })
     void deleteCount(Integer userId, String item);
+
+    @Select("select * from ${item} where userId=#{userId} order by time")
+    List<LinkedHashMap> getRecordPhysical(Integer userId, String item);
+
 }

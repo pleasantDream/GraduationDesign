@@ -158,4 +158,10 @@ public class RecordController {
         System.out.println("测试");
         recordService.test(message);
     }
+
+    @GetMapping("/getRecord")
+    public Result getRecord(@RequestParam("item") String item){
+        System.out.println("获取体检记录: "+item);
+        return recordService.getRecord(item);
+    }
 }
