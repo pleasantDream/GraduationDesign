@@ -393,7 +393,13 @@ public class RecordServiceImpl implements RecordService {
         String question = (String)map2.get("question");
         blood1.setUserId(userId);
 
-        recordMapper.bloodUpdate(blood1);
+        Integer count = recordMapper.getCount(userId,"tb_blood");
+        if(count < 5){
+            recordMapper.bloodUpdate(blood1);
+        }else{
+            recordMapper.deleteCount(userId,"tb_blood");
+            recordMapper.bloodUpdate(blood1);
+        }
         recordMapper.deleteHistory(userId,"血液分析");
         recordMapper.addHsitory(userId, question, blood1.getResult(),"血液分析");
         return Result.success();
@@ -408,7 +414,14 @@ public class RecordServiceImpl implements RecordService {
         Pressure pressure1 = (Pressure) map2.get("pressure");
         String question = (String) map2.get("question");
         pressure1.setUserId(userId);
-        recordMapper.pressureUpdate(pressure1);
+        Integer count = recordMapper.getCount(userId,"tb_pressure");
+        if(count < 5){
+            recordMapper.pressureUpdate(pressure1);
+        }else{
+            recordMapper.deleteCount(userId,"tb_pressure");
+            recordMapper.pressureUpdate(pressure1);
+        }
+
         recordMapper.deleteHistory(userId,"血压分析");
         recordMapper.addHsitory(userId, question, pressure1.getResult(), "血压分析");
         return Result.success();
@@ -424,7 +437,14 @@ public class RecordServiceImpl implements RecordService {
         temperature1.setUserId(userId);
         String question = (String) temperatureMap.get("question");
 
-        recordMapper.temperatureUpdate(temperature1);
+        Integer count = recordMapper.getCount(userId, "tb_temperature");
+        if(count < 5){
+            recordMapper.temperatureUpdate(temperature1);
+        }else{
+            recordMapper.deleteCount(userId,"tb_temperature");
+            recordMapper.temperatureUpdate(temperature1);
+        }
+
         recordMapper.deleteHistory(userId, "体温分析");
         recordMapper.addHsitory(userId, question, temperature1.getResult(),"体温分析");
 
@@ -440,8 +460,14 @@ public class RecordServiceImpl implements RecordService {
         Urine urine1 = (Urine) map2.get("urine");
         String question = (String) map2.get("question");
         urine1.setUserId(userId);
+        Integer count = recordMapper.getCount(userId, "tb_urine");
+        if(count < 5){
+            recordMapper.urineUpdate(urine1);
+        }else{
+            recordMapper.deleteCount(userId,"tb_urine");
+            recordMapper.urineUpdate(urine1);
+        }
 
-        recordMapper.urineUpdate(urine1);
         recordMapper.deleteHistory(userId, "尿液分析");
         recordMapper.addHsitory(userId, question, urine1.getResult(), "尿液分析");
         return Result.success();
