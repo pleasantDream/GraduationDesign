@@ -108,7 +108,6 @@
                 <div ref="echartsContainer2" style="width: 500px; height: 380px;"></div>
             </el-col>
         </el-row>
-
     </el-card>
 </template>
 
@@ -361,7 +360,30 @@ const initECharts2 = () => {
         calaulable: true,
         xAxis: {
             type: 'category',
-            data: [records.value[0].time, records.value[1].time, records.value[2].time, records.value[3].time, records.value[4].time]
+            data: records.value.map(item => item.time), // 使用 map 方法动态生成横坐标点
+            axisLabel: {
+                interval: 0,
+                // 文字换行
+                formatter: function (value) {
+                    let res = ""; // 拼接加\n返回的类目项
+                    let maxLength = 6; // 每项显示文字个数  数字设置几，就一行显示几个文字
+                    let valLength = value.length; // X轴上的文字个数
+                    let rowN = Math.ceil(valLength / maxLength); // 需要换行的行数
+                    // 换行的行数大于1,
+                    if (rowN > 1) {
+                        for (let i = 0; i < rowN; i++) {
+                            let temp = ""; //每次截取的字符串
+                            let start = i * maxLength; //开始截取的位置
+                            let end = start + maxLength; //结束截取的位置
+                            temp = value.substring(start, end) + "\n";
+                            res += temp; //拼接字符串
+                        }
+                        return res;
+                    } else {
+                        return value;
+                    }
+                },
+            },
         },
         yAxis: {
             type: 'value',
@@ -372,13 +394,13 @@ const initECharts2 = () => {
                 name: '体重',
                 type: 'line',
                 stack: 'Total',
-                data: [records.value[0].weight, records.value[1].weight, records.value[2].weight, records.value[3].weight, records.value[4].weight]
+                data: records.value.map(item => item.weight), 
             },
             {
                 name: 'bmi',
                 type: 'line',
                 stack: 'Total',
-                data: [records.value[0].bmi, records.value[1].bmi, records.value[2].bmi, records.value[3].bmi, records.value[4].bmi]
+                data: records.value.map(item => item.bmi), 
             }
         ]
     };

@@ -1,8 +1,10 @@
 <template>
-    <el-card class="page-container">
+    <el-card class="page-container" v-if="isTest">
         <template #header>
             <div class="header">
                 <span>血液分析</span>
+                <el-button type="primary" styel="margin-left: auto;"
+                    @click="isTest = false; isRecord = true; goRecord()">体检记录</el-button>
             </div>
         </template>
         <el-row>
@@ -90,6 +92,29 @@
             </template>
         </el-drawer>
     </el-card>
+    <el-card class="page-container" v-if="isRecord">
+        <template #header>
+            <div class="header">
+                <span>体检记录</span>
+                <el-button type="primary" style="margin-left: auto;"
+                    @click="isRecord = false; isTest = true; goBack();">血压分析</el-button>
+            </div>
+        </template>
+        <el-row>
+            <el-col :span="12.3">
+                <el-table :data="records" stripe style="width: 100%">
+                    <el-table-column prop="time" label="时间" width="100" />
+                    <el-table-column prop="hb" label="hb" width="100" />
+                    <el-table-column prop="wbc" label="wbc" width="100" />
+                    <el-table-column prop="plt" label="plt" width="100" />
+                    <el-table-column prop="glucose" label="glucose" width="100" />
+                </el-table>
+            </el-col>
+            <el-col :span="9" >
+                <div ref="echartsContainer2" style="width: 500px; height: 380px;"></div>
+            </el-col>
+        </el-row>
+    </el-card>
 
 </template>
 
@@ -97,7 +122,36 @@
 import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue';
 import { formatTime } from '@/utils/formatTime.js';
-import { addBloodService, getBloodService, UpdateBloodService, getHistoryService, chatService, countService } from '@/api/record.js';
+import { addBloodService, getBloodService, UpdateBloodService, getHistoryService, chatService, countService, getRecordService } from '@/api/record.js';
+/*体检记录 */
+const records = ref([]);
+const goBack = async () => {
+    try {
+        records.value.splice(0, records.value.length);  //清空数组
+        let result = await getBloodService();
+        blood.value = result;
+        initECharts();
+    } catch (error) {
+        console.error('Failed to fetch physical data:', error);
+    }
+}
+const goRecord = async () => {
+    try {
+        let result = await getRecordService("tb_blood");
+        result.data.forEach(item => {
+            item.time = formatTime(item.time);
+            records.value.push(item);
+        });
+        initECharts2();
+    } catch (error) {
+        console.error('Failed to fetch physical data:', error);
+    }
+}
+
+/*体检分析和体检记录页面显示*/
+const isTest = ref(true)
+const isRecord = ref(false)
+
 
 
 /* 咨询抽屉 */
@@ -305,9 +359,107 @@ const initECharts = () => {
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 };
+// 体检记录的折线图
+const echartsContainer2 = ref(null);
+const initECharts2 = () => {
+    let myChart = echarts.init(echartsContainer2.value);
+    const option = {
+        title: {
+            text: '血液测量记录'
+        },
+        tooltip: {
+            trigger: 'axis',
+        },
+        legend: {
+            data: ['hb', 'wbc', 'plt', 'glucose']
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+
+        toolbox: {
+            show: true,
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true },
+            },
+        },
+        calaulable: true,
+        xAxis: {
+            type: 'category',
+            data: records.value.map(item => item.time), // 使用 map 方法动态生成横坐标点
+            axisLabel: {
+                interval: 0,
+                // 文字换行
+                formatter: function (value) {
+                    let res = ""; // 拼接加\n返回的类目项
+                    let maxLength = 6; // 每项显示文字个数  数字设置几，就一行显示几个文字
+                    let valLength = value.length; // X轴上的文字个数
+                    let rowN = Math.ceil(valLength / maxLength); // 需要换行的行数
+                    // 换行的行数大于1,
+                    if (rowN > 1) {
+                        for (let i = 0; i < rowN; i++) {
+                            let temp = ""; //每次截取的字符串
+                            let start = i * maxLength; //开始截取的位置
+                            let end = start + maxLength; //结束截取的位置
+                            temp = value.substring(start, end) + "\n";
+                            res += temp; //拼接字符串
+                        }
+                        return res;
+                    } else {
+                        return value;
+                    }
+                },
+            },
+        },
+        yAxis: {
+            type: 'value',
+        },
+
+        series: [
+            {
+                name: 'hb',
+                type: 'line',
+                stack: 'Total',
+                data: records.value.map(item => item.hb), 
+            },
+            {
+                name: 'wbc',
+                type: 'line',
+                stack: 'Total',
+                data: records.value.map(item => item.wbc), 
+            },
+            {
+                name: 'plt',
+                type: 'line',
+                stack: 'Total',
+                data: records.value.map(item => item.plt),
+            },
+            {
+                name: 'glucose',
+                type: 'line',
+                stack: 'Total',
+                data: records.value.map(item => item.glucose),
+            },
+        ]
+    };
+    myChart.setOption(option);
+};
+
+
 </script>
 
 <style lang="scss" scoped>
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
 .message-container {
     margin-bottom: 10px;
 }
