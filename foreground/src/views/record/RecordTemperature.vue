@@ -389,7 +389,6 @@ const initECharts2 = () => {
             {
                 name: '体温',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.temperature),
             },
         ]

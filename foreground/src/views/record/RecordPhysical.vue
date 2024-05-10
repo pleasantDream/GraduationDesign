@@ -347,7 +347,6 @@ const initECharts2 = () => {
             bottom: '3%',
             containLabel: true
         },
-        
         toolbox: {
             show: true,
             feature: {
@@ -387,19 +386,18 @@ const initECharts2 = () => {
         },
         yAxis: {
             type: 'value',
+            min: 0,
         },
 
         series: [
             {
                 name: '体重',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.weight), 
             },
             {
                 name: 'bmi',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.bmi), 
             }
         ]

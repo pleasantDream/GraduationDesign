@@ -395,13 +395,11 @@ const initECharts2 = () => {
             {
                 name: '高压',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.highPressure),
             },
             {
                 name: '低压',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.lowPressure),
             }
         ]

@@ -425,25 +425,21 @@ const initECharts2 = () => {
             {
                 name: 'hb',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.hb), 
             },
             {
                 name: 'wbc',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.wbc), 
             },
             {
                 name: 'plt',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.plt),
             },
             {
                 name: 'glucose',
                 type: 'line',
-                stack: 'Total',
                 data: records.value.map(item => item.glucose),
             },
         ]
