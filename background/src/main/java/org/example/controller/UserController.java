@@ -169,7 +169,7 @@ public class UserController {
         return Result.success();
     }
 
-    @PostMapping("/feedback/get")
+    @GetMapping("/feedback/get")
     public List<Feedback> feedbackGet(@RequestParam("category") String category){
         System.out.println("获取反馈意见");
         return userService.feedbackGet(category);

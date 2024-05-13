@@ -66,6 +66,14 @@ public interface UserMapper {
             "values(#{userId}, now(), #{category}, #{content})")
     void feedbackAdd(Integer userId, String category, String content);
 
-    @Select("select * from tb_feedback where userId=#{userId} and category=#{category} ORDER BY createTime DESC")
+    @Select({
+            "<script>",
+            "SELECT * FROM tb_feedback WHERE userId = #{userId}",
+            "<if test='category != null and category != \"all\"'>",
+            "AND category = #{category}",
+            "</if>",
+            "ORDER BY createTime DESC",
+            "</script>"
+    })
     List<Feedback> feedbackGet(Integer userId, String category);
 }

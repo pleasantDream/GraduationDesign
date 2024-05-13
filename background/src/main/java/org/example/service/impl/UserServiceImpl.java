@@ -252,7 +252,6 @@ public class UserServiceImpl implements UserService {
     public List<Feedback> feedbackGet(String category) {
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
-
         return userMapper.feedbackGet(userId, category);
     }
 }
