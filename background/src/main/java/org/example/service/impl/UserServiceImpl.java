@@ -4,6 +4,7 @@ import jakarta.annotation.Resource;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.example.mapper.UserMapper;
+import org.example.pojo.Feedback;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -134,7 +136,7 @@ public class UserServiceImpl implements UserService {
             //设置发送人的邮箱和用户名
             htmlEmail.setFrom("3385369312@qq.com","智慧健康");
             //设置发送人的用户名和授权码
-            htmlEmail.setAuthentication("3385369312@qq.com","rqnlgkloljufciji");
+            htmlEmail.setAuthentication("3385369312@qq.com","hvvlpgyemnircjjh");
             //设置发送标题
             htmlEmail.setSubject("智慧健康: 你的邮箱验证码");
             //设置发送内容
@@ -234,5 +236,23 @@ public class UserServiceImpl implements UserService {
         String md5String = Md5Util.getMD5String(newPassword);
         userMapper.updatePwdByEmail(md5String,email);
         return Result.success();
+    }
+
+    @Override
+    public void feedbackAdd(Map<String, String> params) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        String category = params.get("category");
+        String content = params.get("content");
+        userMapper.feedbackAdd(userId, category, content);
+    }
+
+    @Override
+    public List<Feedback> feedbackGet(String category) {
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        return userMapper.feedbackGet(userId, category);
     }
 }

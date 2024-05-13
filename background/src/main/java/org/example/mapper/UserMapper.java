@@ -4,7 +4,10 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.example.pojo.Feedback;
 import org.example.pojo.User;
+
+import java.util.List;
 
 /**
  * @author TZH
@@ -16,10 +19,8 @@ public interface UserMapper {
      * @param username 用户名
      * @return 用户信息
      */
-    @Select("select * from tb_user where username = #{username}")
-    User findByUserName(
-            String username
-    );
+    @Select("select * from tb_user where binary username = #{username}")
+    User findByUserName(String username);
 
     /**
      * 注册
@@ -60,4 +61,11 @@ public interface UserMapper {
 
     @Update("update tb_user set password=#{md5String} where email=#{email}")
     void updatePwdByEmail(String md5String, String email);
+
+    @Insert("insert into tb_feedback(userId, createTime, category, content) " +
+            "values(#{userId}, now(), #{category}, #{content})")
+    void feedbackAdd(Integer userId, String category, String content);
+
+    @Select("select * from tb_feedback where userId=#{userId} and category=#{category} ORDER BY createTime DESC")
+    List<Feedback> feedbackGet(Integer userId, String category);
 }

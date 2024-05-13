@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import org.apache.ibatis.annotations.Param;
+import org.example.pojo.Feedback;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
@@ -14,7 +15,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.DrbgParameters;
+import java.security.PublicKey;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -157,5 +160,18 @@ public class UserController {
     public Result updateAvatar(@RequestParam @URL String avatarUrl){
         userService.updateAvatar(avatarUrl);
         return Result.success();
+    }
+
+    @PostMapping("/feedback/add")
+    public Result feedbackAdd(@RequestBody Map<String,String> params){
+        System.out.println("提交反馈意见");
+        userService.feedbackAdd(params);
+        return Result.success();
+    }
+
+    @PostMapping("/feedback/get")
+    public List<Feedback> feedbackGet(@RequestParam("category") String category){
+        System.out.println("获取反馈意见");
+        return userService.feedbackGet(category);
     }
 }

@@ -1,8 +1,10 @@
 package org.example.service;
 
+import org.example.pojo.Feedback;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,4 +75,8 @@ public interface UserService {
     Result loginByEmail(String email, String reEmail,String code, String reCode);
 
     Result forgetPassword(String newPassword, String rePassword, String email, String code, String reCode);
+
+    void feedbackAdd(Map<String, String> params);
+
+    List<Feedback> feedbackGet(String category);
 }
