@@ -70,3 +70,20 @@ export const userAvatarUpdateService = (avatarUrl) => {
     params.append('avatarUrl', avatarUrl)
     return request.patch('/user/avatar/updata', params)
 }
+
+// 提交用户意见反馈
+export const userFeedbackAddService = (feedbackData) => {
+    return request.post('/user/feedback/add', feedbackData)
+}
+// 修改用户意见反馈
+export const userFeedbackUpdateService = (feedbackData) => {
+    return request.post('/user/feedback/update', feedbackData)
+}
+// 获取用户意见反馈
+export const userFeedbackgetService = (params) => {
+    return request.get('/user/feedback/get', { params: params })
+}
+// 删除用户意见反馈
+export const userFeedbackDeleteService = (id) => {
+    return request.delete('/user/feedback/delete?id=' + id)
+}

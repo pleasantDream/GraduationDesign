@@ -17,10 +17,10 @@
                     <el-form-item label="年龄">
                         <el-input v-model="pressure.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="高压">
+                    <el-form-item label="高压(mmHg)">
                         <el-input v-model="pressure.highPressure"></el-input>
                     </el-form-item>
-                    <el-form-item label="低压">
+                    <el-form-item label="低压(mmHg)">
                         <el-input v-model="pressure.lowPressure"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -98,8 +98,8 @@
             <el-col :span="10">
                 <el-table :data="records" stripe style="width: 100%">
                     <el-table-column prop="time" label="时间" width="100" />
-                    <el-table-column prop="highPressure" label="高压" width="100" />
-                    <el-table-column prop="lowPressure" label="低压" width="100" />
+                    <el-table-column prop="highPressure" label="高压(mmHg)" width="100" />
+                    <el-table-column prop="lowPressure" label="低压(mmHg)" width="100" />
                 </el-table>
             </el-col>
             <el-col :span="12" style="margin-left: 32px;">
@@ -302,7 +302,7 @@ const initECharts = () => {
         calaulable: true,
         xAxis: {
             type: 'category',
-            data: ["低压", "高压"]
+            data: ["低压(mmHg)", "高压(mmHg)"]
         },
         yAxis: {
             type: 'value',
@@ -341,7 +341,7 @@ const initECharts2 = () => {
             trigger: 'axis',
         },
         legend: {
-            data: ['高压', '低压']
+            data: ['高压(mmHg)', '低压(mmHg)']
         },
         grid: {
             left: '3%',
@@ -393,12 +393,12 @@ const initECharts2 = () => {
 
         series: [
             {
-                name: '高压',
+                name: '高压(mmHg)',
                 type: 'line',
                 data: records.value.map(item => item.highPressure),
             },
             {
-                name: '低压',
+                name: '低压(mmHg)',
                 type: 'line',
                 data: records.value.map(item => item.lowPressure),
             }

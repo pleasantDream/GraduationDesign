@@ -2,6 +2,9 @@
 import {
     Management,
     Promotion,
+    PhoneFilled,
+    MostlyCloudy,
+    Avatar,
     UserFilled,
     User,
     Crop,
@@ -78,9 +81,9 @@ const handleCommand = (command) => {
                 <el-sub-menu>
                     <template #title>
                         <el-icon>
-                            <UserFilled />
+                            <Avatar />
                         </el-icon>
-                        <span>体检记录</span>
+                        <span>体检分析</span>
                     </template>
                     <el-menu-item index="/record/RecordPhysical">
                         <el-icon>
@@ -96,19 +99,19 @@ const handleCommand = (command) => {
                     </el-menu-item>
                     <el-menu-item index="/record/RecordPressure">
                         <el-icon>
-                            <EditPen />
+                            <MostlyCloudy />
                         </el-icon>
                         <span>血压分析</span>
                     </el-menu-item>
                     <el-menu-item index="/record/RecordTemperature">
                         <el-icon>
-                            <EditPen />
+                            <Management />
                         </el-icon>
                         <span>体温分析</span>
                     </el-menu-item>
                     <el-menu-item index="/record/RecordUrine">
                         <el-icon>
-                            <EditPen />
+                            <Promotion />
                         </el-icon>
                         <span>尿液分析</span>
                     </el-menu-item>
@@ -116,7 +119,7 @@ const handleCommand = (command) => {
 
                 <el-menu-item index="/user/info">
                     <el-icon>
-                        <Management />
+                        <UserFilled />
                     </el-icon>
                     <span>基本资料</span>
                 </el-menu-item>
@@ -138,6 +141,12 @@ const handleCommand = (command) => {
                         <EditPen />
                     </el-icon>
                     <span>更换头像</span>
+                </el-menu-item>
+                <el-menu-item index="/user/feedback">
+                    <el-icon>
+                        <PhoneFilled />
+                    </el-icon>
+                    <span>意见反馈</span>
                 </el-menu-item>
             </el-menu>
         </el-aside>

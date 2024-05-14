@@ -134,8 +134,16 @@ const RegisterRules = {
         { min: 5, max: 16, message: '长度为5-16位非空字符', trigger: 'blur' }
     ],
     password: [
-        { required: true, message: '请输入密码', trigger: 'blur' },
-        { min: 5, max: 16, message: '长度为5-16位非空字符', trigger: 'blur' }
+        {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+        },
+        {
+            pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,16}$/,
+            message: '密码必须包含数字、大写字母、小写字母,且长度为5到16位',
+            trigger: 'blur'
+        }
     ],
     rePassword: [
         { validator: checkRePassword, trigger: 'blur' },
@@ -280,7 +288,7 @@ const register = async () => {
                 </el-form-item>
             </el-form>
 
-            <!-- 重置密码表单 -->
+            <!-- 忘记密码表单 -->
             <el-form ref="form" size="large" autocomplete="off" v-if="isResetPwd" :model="resetPwdData"
                 :rules="RegisterRules">
                 <el-form-item>
@@ -296,7 +304,7 @@ const register = async () => {
                 <el-form-item prop="code">
                     <el-input :prefix-icon="EditPen" placeholder="请输入验证码" v-model="resetPwdData.code"></el-input>
                 </el-form-item>
-                <el-form-item prop="newPassword">
+                <el-form-item prop="password">
                     <el-input name="password" :prefix-icon="Lock" type="password" placeholder="新密码"
                         v-model="resetPwdData.newPassword"></el-input>
                 </el-form-item>

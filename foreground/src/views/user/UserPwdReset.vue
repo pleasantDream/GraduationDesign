@@ -13,10 +13,14 @@ const rules = {
         { required: true, message: '请输入旧密码', trigger: 'blur' },
     ],
     newPwd: [
-        { required: true, message: '请输入新密码', trigger: 'blur' },
         {
-            pattern: /^\S{5,16}$/,
-            message: '密码必须是5-16位的非空字符串',
+            required: true,
+            message: '请输入新密码',
+            trigger: 'blur'
+        },
+        {
+            pattern: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,16}$/,
+            message: '密码必须包含数字、大写字母、小写字母,且长度为5到16位',
             trigger: 'blur'
         }
     ],
