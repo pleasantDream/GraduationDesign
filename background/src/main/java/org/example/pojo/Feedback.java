@@ -21,5 +21,6 @@ public class Feedback {
     private LocalDateTime createTime;
     private String category;
     private String content;
+    private String feedbackImg;
     private String state;
 }

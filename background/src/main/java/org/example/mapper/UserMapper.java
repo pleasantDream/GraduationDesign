@@ -1,12 +1,10 @@
 package org.example.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.example.pojo.Feedback;
 import org.example.pojo.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -62,9 +60,16 @@ public interface UserMapper {
     @Update("update tb_user set password=#{md5String} where email=#{email}")
     void updatePwdByEmail(String md5String, String email);
 
-    @Insert("insert into tb_feedback(userId, createTime, category, content) " +
-            "values(#{userId}, now(), #{category}, #{content})")
-    void feedbackAdd(Integer userId, String category, String content);
+    @Insert({
+            "<script>",
+            "INSERT INTO tb_feedback (userId, createTime, category, content, state",
+            "<if test='feedbackImg != null'>, feedbackImg</if>",
+            ") VALUES (#{userId}, NOW(), #{category}, #{content}, #{state}",
+            "<if test='feedbackImg != null'>, #{feedbackImg}</if>",
+            ")",
+            "</script>"
+    })
+    void feedbackAdd(Integer userId, String category, String content, String feedbackImg, String state);
 
     @Select({
             "<script>",
@@ -72,8 +77,18 @@ public interface UserMapper {
             "<if test='category != null and category != \"all\"'>",
             "AND category = #{category}",
             "</if>",
+            "<if test='state != null'>",
+            "AND state = #{state}",
+            "</if>",
             "ORDER BY createTime DESC",
             "</script>"
     })
-    List<Feedback> feedbackGet(Integer userId, String category);
+    List<Feedback> feedbackGet(Integer userId, String category, String state);
+
+    @Update("update tb_feedback set createTime=now(),category=#{category}, content=#{content}," +
+            "feedbackImg=#{feedbackImg},state=#{state} where id=#{id}")
+    void feedbackUpdate(Integer id, String category, String content, String feedbackImg, String state);
+
+    @Delete("delete from tb_feedback where id = #{id}")
+    void feedbackDelete(Integer id);
 }

@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.pojo.Feedback;
+import org.example.pojo.PageBean;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 
@@ -78,5 +79,9 @@ public interface UserService {
 
     void feedbackAdd(Map<String, String> params);
 
-    List<Feedback> feedbackGet(String category);
+    PageBean<Feedback> feedbackGet(Integer pageNum,Integer pageSize, String category, String state);
+
+    Result feedbackUpdate(Map<String, Object> params);
+
+    Result feedbackDelete(Integer id);
 }

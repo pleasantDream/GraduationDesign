@@ -1,10 +1,13 @@
 package org.example.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import jakarta.annotation.Resource;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.example.mapper.UserMapper;
 import org.example.pojo.Feedback;
+import org.example.pojo.PageBean;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
@@ -15,7 +18,10 @@ import org.example.utils.ValidateCodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,13 +251,47 @@ public class UserServiceImpl implements UserService {
 
         String category = params.get("category");
         String content = params.get("content");
-        userMapper.feedbackAdd(userId, category, content);
+        String feedbackImg = params.get("feedbackImg");
+        System.out.println(category);
+        System.out.println(content);
+        System.out.println(feedbackImg);
+        userMapper.feedbackAdd(userId, category, content, feedbackImg, "未查看");
     }
 
     @Override
-    public List<Feedback> feedbackGet(String category) {
+    public PageBean<Feedback> feedbackGet(Integer pageNum,Integer pageSize, String category, String state) {
+        // 创建pageBean对象
+        PageBean<Feedback> pb = new PageBean<>();
+        // pageNum 表示要查询的页码，pageSize 表示每页的记录数。
+        PageHelper.startPage(pageNum, pageSize);
+
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
-        return userMapper.feedbackGet(userId, category);
+        System.out.println(state);
+        List<Feedback> fb = userMapper.feedbackGet(userId, category, state);
+        System.out.println(fb);
+        // page中提供了方法，可以获取pageHelper分页查询后得到的总记录条数和当前页数据
+        Page<Feedback> p = (Page<Feedback>) fb;
+        // 把数据填充到pageBean对象中
+        pb.setTotal(p.getTotal());
+        pb.setItems(p.getResult());
+        return pb;
+    }
+
+    @Override
+    public Result feedbackUpdate(Map<String, Object> params) {
+        Integer id = (Integer) params.get("id");
+        String category = (String)params.get("category");
+        String content = (String)params.get("content");
+        String feedbackImg = (String)params.get("feedbackImg");
+
+        userMapper.feedbackUpdate(id,category,content,feedbackImg,"未查看");
+        return Result.success();
+    }
+
+    @Override
+    public Result feedbackDelete(Integer id) {
+        userMapper.feedbackDelete(id);
+        return Result.success();
     }
 }

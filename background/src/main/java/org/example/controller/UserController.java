@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Pattern;
 import org.apache.ibatis.annotations.Param;
 import org.example.pojo.Feedback;
+import org.example.pojo.PageBean;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
@@ -170,8 +171,26 @@ public class UserController {
     }
 
     @GetMapping("/feedback/get")
-    public List<Feedback> feedbackGet(@RequestParam("category") String category){
+    public Result<PageBean<Feedback>> feedbackGet(
+            @RequestParam("pageNum") Integer pageNum,
+            @RequestParam("pageSize") Integer pageSize,
+            @RequestParam("category") String category,
+            @RequestParam(required = false) String state
+    ){
         System.out.println("获取反馈意见");
-        return userService.feedbackGet(category);
+        PageBean<Feedback> pageBean = userService.feedbackGet(pageNum,pageSize,category,state);
+        return Result.success(pageBean);
+    }
+
+    @PostMapping("/feedback/update")
+    public Result feedbackUpdate(@RequestBody Map<String,Object> params){
+        System.out.println("修改反馈意见");
+        return userService.feedbackUpdate(params);
+    }
+
+    @DeleteMapping("/feedback/delete")
+    public Result feedbackDelete(@RequestParam("id") Integer id){
+        System.out.println("删除反馈意见");
+        return userService.feedbackDelete(id);
     }
 }
