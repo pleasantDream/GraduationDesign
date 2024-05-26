@@ -10,23 +10,23 @@
         <el-row>
             <!-- span总和为24则充满一行 -->
             <el-col :span="10">
-                <el-form label-width="120px" size="large" :model="physical">
-                    <el-form-item label="性别">
+                <el-form label-width="120px" size="large" :model="urine" :rules="rules">
+                    <el-form-item label="性别" prop="gender">
                         <el-input v-model="urine.gender"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄">
+                    <el-form-item label="年龄" prop="age">
                         <el-input v-model="urine.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="尿液比重">
+                    <el-form-item label="尿液比重" prop="sg">
                         <el-input v-model="urine.sg"></el-input>
                     </el-form-item>
-                    <el-form-item label="尿液ph值">
+                    <el-form-item label="尿液ph值" prop="ph">
                         <el-input v-model="urine.ph"></el-input>
                     </el-form-item>
-                    <el-form-item label="蛋白质(mg/dl)">
+                    <el-form-item label="蛋白质(mg/dl)" prop="protein">
                         <el-input v-model="urine.protein"></el-input>
                     </el-form-item>
-                    <el-form-item label="血细胞脂酶(u/l)">
+                    <el-form-item label="血细胞脂酶(u/l)" prop="le">
                         <el-input v-model="urine.le"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -252,6 +252,80 @@ const urineUpdate = async () => {
 
 // 创建响应式引用来保存体格测量数据
 const urine = ref({});
+// 前端参数校验规则
+const rules = {
+    gender: [
+        {
+            validator: (rule, value, callback) => {
+                if (value !== '男' && value !== '女') {
+                    callback(new Error('性别只能为"男"或"女"'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    age: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (Number.isInteger(Number(value)) && parseInt(value) >= 0 && parseInt(value) <= 200)) {
+                    callback();
+                } else {
+                    callback(new Error('年龄必须是大于等于0小于等于200的整数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    sg: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    ph: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ], protein: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ], le: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+
+}
 
 // 异步获取体格测量数据
 const getUrineData = async () => {

@@ -10,14 +10,14 @@
         <el-row>
             <!-- span总和为24则充满一行 -->
             <el-col :span="10">
-                <el-form label-width="100px" size="large" :model="temperature">
-                    <el-form-item label="性别">
+                <el-form label-width="100px" size="large" :model="temperature" :rules="rules">
+                    <el-form-item label="性别" prop="gender">
                         <el-input v-model="temperature.gender"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄">
+                    <el-form-item label="年龄" prop="age">
                         <el-input v-model="temperature.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="体温(摄氏度)">
+                    <el-form-item label="体温(摄氏度)" prop="temperature">
                         <el-input v-model="temperature.temperature"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -239,6 +239,46 @@ const temperatureUpdate = async () => {
 
 // 保存血压测量数据
 const temperature = ref({});
+
+// 前端参数校验规则
+const rules = {
+    gender: [
+        {
+            validator: (rule, value, callback) => {
+                if (value !== '男' && value !== '女') {
+                    callback(new Error('性别只能为"男"或"女"'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    age: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (Number.isInteger(Number(value)) && parseInt(value) >= 0 && parseInt(value) <= 200)) {
+                    callback();
+                } else {
+                    callback(new Error('年龄必须是大于等于0小于等于200的整数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    temperature: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 33 && parseFloat(value) <= 42)) {
+                    callback();
+                } else {
+                    callback(new Error('体温必须在33到42之间'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ]
+}
 
 const getTemperatureData = async () => {
     try {

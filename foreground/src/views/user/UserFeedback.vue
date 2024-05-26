@@ -158,7 +158,7 @@ const articleDelete = async (row) => {
         <el-form inline>
             <el-form-item label="反馈类型">
                 <el-select placeholder="请选择" v-model="categoryData" style="width: 110px;">
-                    <el-option label="问题报告" value="问题报告"></el-option>
+                    <el-option label="问题反馈" value="问题反馈"></el-option>
                     <el-option label="功能建议" value="功能建议"></el-option>
                     <el-option label="项目建议" value="项目建议"></el-option>
                     <el-option label="页面改进" value="页面改进"></el-option>
@@ -204,7 +204,7 @@ const articleDelete = async (row) => {
             <el-form :model="feedbackData" label-width="100px">
                 <el-form-item label="反馈类型">
                     <el-select placeholder="请选择" v-model="feedbackData.category">
-                        <el-option label="问题报告" value="问题报告"></el-option>
+                        <el-option label="问题反馈" value="问题反馈"></el-option>
                         <el-option label="功能建议" value="功能建议"></el-option>
                         <el-option label="项目建议" value="项目建议"></el-option>
                         <el-option label="页面改进" value="页面改进"></el-option>

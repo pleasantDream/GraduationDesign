@@ -10,23 +10,23 @@
         <el-row>
             <!-- span总和为24则充满一行 -->
             <el-col :span="10">
-                <el-form label-width="120px" size="large" :model="physical">
-                    <el-form-item label="性别">
+                <el-form label-width="120px" size="large" :model="blood" :rules="rules">
+                    <el-form-item label="性别" prop="gender">
                         <el-input v-model="blood.gender"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄">
+                    <el-form-item label="年龄" prop="age">
                         <el-input v-model="blood.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="血红蛋白(g/l)">
+                    <el-form-item label="血红蛋白(g/l)" prop="hb">
                         <el-input v-model="blood.hb"></el-input>
                     </el-form-item>
-                    <el-form-item label="白细胞(10^11/l)">
+                    <el-form-item label="白细胞(10^11/l)" prop="wbc">
                         <el-input v-model="blood.wbc"></el-input>
                     </el-form-item>
-                    <el-form-item label="血小板(10^12/l)">
+                    <el-form-item label="血小板(10^12/l)" prop="plt">
                         <el-input v-model="blood.plt"></el-input>
                     </el-form-item>
-                    <el-form-item label="血糖(mg/dl)">
+                    <el-form-item label="血糖(mg/dl)" prop="glucose">
                         <el-input v-model="blood.glucose"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -110,7 +110,7 @@
                     <el-table-column prop="glucose" label="glucose" width="100" />
                 </el-table>
             </el-col>
-            <el-col :span="9" >
+            <el-col :span="9">
                 <div ref="echartsContainer2" style="width: 500px; height: 380px;"></div>
             </el-col>
         </el-row>
@@ -151,7 +151,6 @@ const goRecord = async () => {
 /*体检分析和体检记录页面显示*/
 const isTest = ref(true)
 const isRecord = ref(false)
-
 
 
 /* 咨询抽屉 */
@@ -254,6 +253,80 @@ const bloodUpdate = async () => {
 
 // 创建响应式引用来保存测量数据
 const blood = ref({});
+// 前端参数校验规则
+const rules = {
+    gender: [
+        {
+            validator: (rule, value, callback) => {
+                if (value !== '男' && value !== '女') {
+                    callback(new Error('性别只能为"男"或"女"'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    age: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (Number.isInteger(Number(value)) && parseInt(value) >= 0 && parseInt(value) <= 200)) {
+                    callback();
+                } else {
+                    callback(new Error('年龄必须是大于等于0小于等于200的整数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ], 
+    hb: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    wbc: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ], plt: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ], glucose: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+
+}
 
 // 异步获取测量数据
 const getBloodData = async () => {

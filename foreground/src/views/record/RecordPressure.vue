@@ -10,17 +10,17 @@
         <el-row>
             <!-- span总和为24则充满一行 -->
             <el-col :span="10">
-                <el-form label-width="100px" size="large" :model="pressure">
-                    <el-form-item label="性别">
+                <el-form label-width="100px" size="large" :model="pressure" :rules="rules">
+                    <el-form-item label="性别" prop="gender">
                         <el-input v-model="pressure.gender"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄">
+                    <el-form-item label="年龄" prop="age">
                         <el-input v-model="pressure.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="高压(mmHg)">
+                    <el-form-item label="高压(mmHg)" prop="highPressure">
                         <el-input v-model="pressure.highPressure"></el-input>
                     </el-form-item>
-                    <el-form-item label="低压(mmHg)">
+                    <el-form-item label="低压(mmHg)" prop="lowPressure">
                         <el-input v-model="pressure.lowPressure"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -244,6 +244,58 @@ const pressureUpdate = async () => {
 
 // 保存血压测量数据
 const pressure = ref({});
+// 前端参数校验规则
+const rules = {
+    gender: [
+        {
+            validator: (rule, value, callback) => {
+                if (value !== '男' && value !== '女') {
+                    callback(new Error('性别只能为"男"或"女"'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    age: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (Number.isInteger(Number(value)) && parseInt(value) >= 0 && parseInt(value) <= 200)) {
+                    callback();
+                } else {
+                    callback(new Error('年龄必须是大于等于0小于等于200的整数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    highPressure: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    lowPressure: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 0)) {
+                    callback();
+                } else {
+                    callback(new Error('必须为非负数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+
+}
 
 const getPressureData = async () => {
     try {

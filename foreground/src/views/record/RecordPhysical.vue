@@ -10,17 +10,17 @@
         <el-row>
             <!-- span总和为24则充满一行 -->
             <el-col :span="10">
-                <el-form label-width="100px" size="large" :model="physical">
-                    <el-form-item label="性别">
+                <el-form label-width="100px" size="large" :model="physical" :rules="rules">
+                    <el-form-item label="性别" prop="gender">
                         <el-input v-model="physical.gender"></el-input>
                     </el-form-item>
-                    <el-form-item label="年龄">
+                    <el-form-item label="年龄" prop="age">
                         <el-input v-model="physical.age"></el-input>
                     </el-form-item>
-                    <el-form-item label="身高(米)">
+                    <el-form-item label="身高(米)" prop="height">
                         <el-input v-model="physical.height"></el-input>
                     </el-form-item>
-                    <el-form-item label="体重(千克)">
+                    <el-form-item label="体重(千克)" prop="weight">
                         <el-input v-model="physical.weight"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -241,7 +241,57 @@ const physicalUpdate = async()=>{
 
 // 创建响应式引用来保存体格测量数据
 const physical = ref({});
-
+// 前端参数校验规则
+const rules = {
+    gender: [
+        {
+            validator: (rule, value, callback) => {
+                if (value !== '男' && value !== '女') {
+                    callback(new Error('性别只能为"男"或"女"'));
+                } else {
+                    callback();
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    age: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (Number.isInteger(Number(value)) && parseInt(value) >= 0 && parseInt(value) <= 200)) {
+                    callback();
+                } else {
+                    callback(new Error('年龄必须是大于等于0小于等于200的整数'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    height: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (parseFloat(value) >= 1 && parseFloat(value) <= 2.4)) {
+                    callback();
+                } else {
+                    callback(new Error('身高必须在1m到2.4m之间'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ],
+    weight: [
+        {
+            validator: (rule, value, callback) => {
+                if (value === '' || (Number.isInteger(Number(value)) && parseInt(value) >= 30 && parseInt(value) <= 200)) {
+                    callback();
+                } else {
+                    callback(new Error('体重必须在30kg到200kg之间'));
+                }
+            },
+            trigger: 'blur'
+        }
+    ]
+}
 // 异步获取体格测量数据
 const getPhysicalData = async () => {
     try {
@@ -285,9 +335,9 @@ const initECharts = () => {
         tooltip: {
             trigger: 'axis',
         },
-       legend: {
+        legend: {
            data: ['用户', '较低', '较高'],
-       },
+        },
         toolbox: {
             show: true,
             feature: {
